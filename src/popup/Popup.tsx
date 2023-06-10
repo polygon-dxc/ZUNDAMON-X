@@ -9,11 +9,9 @@ const Popup = (): ReactElement => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="h-screen items-center justify-center">
       <h1>Popup</h1>
-      <div>
-        <button onClick={openOptionsPage}>オプションページを開く</button>
-      </div>
+      <button onClick={openOptionsPage}>オプションページを開く</button>
     </div>
   );
 };
