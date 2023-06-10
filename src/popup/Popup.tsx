@@ -1,5 +1,8 @@
 import React, { ReactElement } from 'react';
 
+import AudioAnalyzer from './AudioAnalyzer';
+import AudioAnalyzerTest from './AudioAnalyzerTest';
+
 const Popup = (): ReactElement => {
   document.body.style.width = '15rem';
   document.body.style.height = '15rem';
