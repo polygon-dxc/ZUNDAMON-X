@@ -6,7 +6,7 @@ const scripting = async (onRun: () => number | boolean) => {
     currentWindow: true,
   });
   /* 取得したタブに対してスクリプトを実行 */
-  chrome.scripting
+  return chrome.scripting
     .executeScript({
       target: { tabId: tab.id || 0 },
       func: onRun,
@@ -26,6 +26,7 @@ export const getVideoCurrentTime = () => {
   return scripting(videoCurrentTime);
 };
 
+//再生状態を取得
 export const getPlaybackStatus = () => {
   const playbackStatus = () => {
     const video = document.getElementsByTagName('video')[0];
