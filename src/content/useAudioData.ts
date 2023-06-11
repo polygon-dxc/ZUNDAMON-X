@@ -36,4 +36,6 @@ const useAudioData = (subtitle: string, start: number) => {
   }, [subtitle, start]);
 };
 
+// dataをどのようにして呼び出すかを明日確認する
+
 export default useAudioData;
