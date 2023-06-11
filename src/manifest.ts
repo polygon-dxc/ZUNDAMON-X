@@ -5,6 +5,7 @@ const manifest: ManifestV3Export = {
   name: 'ZUNDAMON-X',
   description: 'Browser Extension, TypeScript, React',
   version: '0.1',
+  permissions: ['storage', 'tabs', 'activeTab', 'scripting'],
   background: {
     service_worker: 'src/background/index.ts',
   },
@@ -43,7 +44,6 @@ const manifest: ManifestV3Export = {
     '48': 'images/extension_48.png',
     '128': 'images/extension_128.png',
   },
-  permissions: ['storage', 'tabs', 'activeTab'],
 };
 
 export default manifest;
