@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
+import { videoidtype } from '../types';
+
 //カスタムフックを使用
 function useGetVideoId() {
   const [url, setUrl] = useState<string>();
-  const [videoId, setVideoId] = useState<string>();
+  const [videoIdInfo, setVideoIdInfo] = useState<videoidtype>({ videoId: '' });
 
   useEffect(() => {
     // Query for the active tab in the current window
@@ -11,11 +13,13 @@ function useGetVideoId() {
       const url = tabs[0].url;
       setUrl(url);
       const videoId = url?.split('v=')[1].split('&')[0];
-      setVideoId(videoId);
+      if (typeof videoId === 'string') {
+        setVideoIdInfo({ videoId: videoId }); // Update the whole object
+      }
     });
   }, []);
 
-  return videoId;
+  return videoIdInfo;
 }
 
 export default useGetVideoId;
