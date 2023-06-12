@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
 import getTranscript from '../background/getTranscript';
-import useGetVideoId from '../background/getVideoId'; // useGetVideoIdのインポートを忘れずに
+import useGetVideoId from '../background/useGetVideoId'; // useGetVideoIdのインポートを忘れずに
 import { getTranscriptResponseType, videoidtype } from '../types';
 
 function TranscriptComponent() {
+  /*
   const [transcript, setTranscript] = useState<getTranscriptResponseType[]>([]);
   const videoId: videoidtype = {
     videoId: useGetVideoId() || '',
@@ -33,6 +34,7 @@ function TranscriptComponent() {
       {transcript[2]?.start}
     </div>
   );
+  */
 }
 
 export default TranscriptComponent;
