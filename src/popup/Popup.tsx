@@ -1,5 +1,7 @@
 import React, { ReactElement } from 'react';
 
+import MainFunctionCaller from '../content/mainFunctionCaller';
+
 import AudioAnalyzer from './AudioAnalyzer';
 import AudioAnalyzerTest from './AudioAnalyzerTest';
 
@@ -15,6 +17,7 @@ const Popup = (): ReactElement => {
     <div className="h-screen items-center justify-center">
       <h1>Popup</h1>
       <button onClick={openOptionsPage}>オプションページを開く</button>
+      <MainFunctionCaller />
     </div>
   );
 };
