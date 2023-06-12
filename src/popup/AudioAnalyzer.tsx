@@ -68,7 +68,12 @@ const AudioAnalyzer: FC<Props> = ({ file }) => {
   return (
     <div>
       <button onClick={playFile}>play</button>
-      <img src={number} />
+      <img
+        src={chrome.runtime.getURL(number)}
+        style={{
+          height: '100px',
+        }}
+      />
     </div>
   );
 };

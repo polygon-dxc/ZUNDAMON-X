@@ -18,6 +18,7 @@ const scripting = async (onRun: () => number | boolean) => {
 };
 
 /* 現在の再生時刻を取得 */
+// 例: 1分30秒の場合、90を返す
 export const getVideoCurrentTime = () => {
   const videoCurrentTime = () => {
     const video = document.getElementsByTagName('video')[0];
@@ -26,7 +27,8 @@ export const getVideoCurrentTime = () => {
   return scripting(videoCurrentTime);
 };
 
-//再生状態を取得
+
+/* 現在の再生状態を取得 */
 export const getPlaybackStatus = () => {
   const playbackStatus = () => {
     const video = document.getElementsByTagName('video')[0];
@@ -34,5 +36,3 @@ export const getPlaybackStatus = () => {
   };
   return scripting(playbackStatus);
 };
-
-console.log(getPlaybackStatus());
