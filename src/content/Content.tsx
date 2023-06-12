@@ -8,6 +8,7 @@ import useAudioData from './useAudioData';
 const Content = (): ReactElement => {
   const { data, getAudio } = useAudioData();
 
+  /* 動作確認用 */
   const handleClick = () => {
     getAudio('こんにちは', 1); // useAudioDataフックを呼び出す
   };
@@ -24,7 +25,7 @@ const Content = (): ReactElement => {
     >
       <div style={{ display: 'flex', justifyContent: 'center' }}>Content Example</div>
       <Counter />
-      <button onClick={handleClick}>音声データを取得するボタン</button>
+      <button onClick={handleClick}>audio get button</button>
       <div>{data ? <AudioAnalyzer file={data[1]} /> : <p>No audio file selected</p>}</div>
     </div>
   );
