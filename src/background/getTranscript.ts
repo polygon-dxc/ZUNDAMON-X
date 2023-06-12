@@ -14,8 +14,16 @@ async function getTranscript({ videoId }: videoidtype) {
       videoId: videoId,
     },
 
-  //ローカルアクセス字幕API
+  //GCPアクセス字幕API.ver2
+  const response = await axios.get(`https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy/transcript`, {
+    params: {
+      videoId: videoId,
+    },
+  
+  //通常アクセス字幕API
+  //https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy/transcript?videoId=ZRtdQ81jPUQ
 
+  //ローカルアクセス字幕API
   const response = await axios.get(`http://127.0.0.1:8000/transcript/`, {
       params: {
         id: videoId,
@@ -23,9 +31,9 @@ async function getTranscript({ videoId }: videoidtype) {
   */
 
   try {
-    const response = await axios.get(`http://35.189.143.254/transcript`, {
+    const response = await axios.get(`http://127.0.0.1:8000/transcript/`, {
       params: {
-        videoId: videoId,
+        id: videoId,
       },
       headers: { 'Access-Control-Allow-Origin': '*' },
       withCredentials: true,
