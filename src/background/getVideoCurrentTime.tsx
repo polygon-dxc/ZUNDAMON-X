@@ -28,8 +28,6 @@ export const getVideoCurrentTime = () => {
 };
 
 /* 現在の再生状態を取得 */
-// true: 再生中
-// false: 停止中
 export const getPlaybackStatus = () => {
   const playbackStatus = () => {
     const video = document.getElementsByTagName('video')[0];
