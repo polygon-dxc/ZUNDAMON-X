@@ -13,6 +13,7 @@ const useAudioData = (subtitle: string, start: number) => {
         const url = URL.createObjectURL(blob); // blobから音声のURLを作成
         const audio = new Audio(); // Audioオブジェクトを作成
         audio.src = url; // URLを指定
+        const audioFile = new File([blob], 'filename.wav', { type: 'audio/wav' }); // blobから音声ファイルを作成
 
         /* bufferを使用する場合 */
         const wavFile = new File([buffer], 'filename.wav', { type: 'audio/wav' }); // bufferからwavファイルを作成
@@ -33,9 +34,7 @@ const useAudioData = (subtitle: string, start: number) => {
           [subtitle]: { voice: blob, startTime: start },
         }));
       });
-  }, [subtitle, start]);
+  }, [subtitle, start]); //subtitleとstartが変更されたら再レンダリング
 };
-
-// dataをどのようにして呼び出すかを明日確認する
 
 export default useAudioData;
