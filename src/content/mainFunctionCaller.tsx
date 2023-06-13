@@ -21,7 +21,6 @@ const MainFunctionCaller = () => {
   //VideoIDを取得
   //videoIdのオブジェクト生成
   const video: videoidtype = useGetVideoId();
-  console.log(video.videoId);
 
   //videoIdが変更する度に実行
   useEffect(() => {
@@ -30,8 +29,8 @@ const MainFunctionCaller = () => {
       //字幕データを取得
       getTranscript(video).then((result) => {
         setTranscript(result);
+        console.log('videoID:' + result);
       });
-      console.log(transcript);
 
       const unsubscribe = setInterval(() => {
         //contentアクセス後、毎秒実行
@@ -63,30 +62,29 @@ const MainFunctionCaller = () => {
 
   //currentTimeが変更する度に実行
   useEffect(() => {
-    const nowtranscript = transcript.find(
-      (item) =>
-        Math.abs(currentTime + 3 - item.start) <= 2 ||
-        Math.abs(currentTime + 3 - item.start - item.duration) <= 2
-    );
+    if (currentTime && transcript) {
+      const nowtranscript = transcript.find((item) => Math.abs(currentTime - item.start) <= 0.5);
 
-    if (nowtranscript) {
-      setCurrentTranscript(nowtranscript);
-      console.log(currentTranscript.text);
+      if (nowtranscript) {
+        setCurrentTranscript(nowtranscript);
+      } else {
+        console.log('条件に合う字幕は見つかりませんでした');
+      }
     } else {
-      console.log('条件に合う字幕は見つかりませんでした');
+      console.log('字幕情報が取得できません');
     }
   }, [currentTime]);
 
   return (
     <div>
-      <p>VideoID：{video.videoId}</p>
+      <p>VideoID：{video.videoId ? video.videoId : ''}</p>
       <p>現在時刻：{currentTime}</p>
       <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
-
-      <p>NOW!字幕：{currentTranscript.text}</p>
-      <p> </p>
+      <h1>NOW!字幕</h1>
+      <p>{currentTranscript.text ? currentTranscript.text : 'これはLIVE映像ですね！！'}</p>
+      <p>----------------------------------------</p>
+      <h1>ALL字幕</h1>
       <p>
-        ALL字幕：
         {transcript
           ? transcript.map((item, index) => <p key={index}>{item.text}</p>)
           : '字幕情報が取得できません'}
