@@ -7,22 +7,11 @@ const manifest: ManifestV3Export = {
   version: '0.2',
   content_scripts: [
     {
-      matches: [
-        'http://*/*',
-        'https://*/*',
-        'file:///*',
-        '*://*.youtube.com/*', //YouTubeのみで動作するようにする
-      ],
-      js: ['src/content/index.tsx', 'src/popup/index.tsx'],
+      matches: ['*://*.youtube.com/*'],
+      js: ['src/content/index.tsx'],
     },
   ],
-  permissions: [
-    'storage',
-    'tabs',
-    'activeTab',
-    'scripting',
-    '*://*.youtube.com/*', //YouTubeのみで動作するようにする
-  ],
+  permissions: ['storage', 'tabs', 'activeTab', 'scripting'],
   background: {
     service_worker: 'src/background/index.ts',
   },
