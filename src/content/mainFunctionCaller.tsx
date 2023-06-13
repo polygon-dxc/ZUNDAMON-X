@@ -18,6 +18,8 @@ const MainFunctionCaller = () => {
     duration: 0,
   });
 
+  const getAudioTime = 1000; //音声データの取得間隔
+
   //VideoIDを取得
   //videoIdのオブジェクト生成
   const video: videoidtype = useGetVideoId();
@@ -35,6 +37,7 @@ const MainFunctionCaller = () => {
 
       const unsubscribe = setInterval(() => {
         //contentアクセス後、毎秒実行
+        //現在の再生時刻を取得
         getVideoCurrentTime().then((result) => {
           if (typeof result === 'number') {
             setCurrentTime(result);
@@ -42,6 +45,7 @@ const MainFunctionCaller = () => {
           } else {
             console.log('error');
           }
+          //現在の再生状態を取得
           getPlaybackStatus().then((result) => {
             if (typeof result === 'boolean') {
               setPlaybackStatus(result);
@@ -49,11 +53,9 @@ const MainFunctionCaller = () => {
             } else {
               console.log('error');
             }
-
-            //ここに追加
           });
         });
-      }, 1000);
+      }, getAudioTime);
       return () => {
         //タイマーを消す
         clearInterval(unsubscribe);
@@ -76,6 +78,18 @@ const MainFunctionCaller = () => {
       console.log('条件に合う字幕は見つかりませんでした');
     }
   }, [currentTime]);
+
+  //
+  useEffect(() => {
+    const startTime = transcript.find(
+      (item) =>
+        Math.abs(currentTime + 3 - item.start) <= 0.5 ||
+        Math.abs(currentTime + 3 - item.start - item.duration) <= 0.5
+    );
+
+    // 以下はアクションの例
+    console.log('startTimeが変更されました:', startTime);
+  }, [currentTranscript.start]);
 
   return (
     <div>
