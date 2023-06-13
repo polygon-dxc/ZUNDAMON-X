@@ -13,7 +13,7 @@ const manifest: ManifestV3Export = {
         'file:///*',
         '*://*.youtube.com/*', //YouTubeのみで動作するようにする
       ],
-      js: ['src/content/index.tsx'],
+      js: ['src/content/index.tsx', 'src/popup/index.tsx'],
     },
   ],
   permissions: [

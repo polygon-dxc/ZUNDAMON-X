@@ -5,6 +5,8 @@ import getTranscript from '../background/getTranscript';
 import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
 import useGetVideoId from '../background/useGetVideoId';
 import { currentTimeType, getTranscriptResponseType, videoidtype } from '../types';
+import useAudioData from './useAudioData';
+import AudioAnalyzer from '../popup/AudioAnalyzer';
 
 //Youtube再生画面を開いたらこのページ内の動作は自動で実行されます
 
@@ -17,6 +19,7 @@ const MainFunctionCaller = () => {
     start: 0,
     duration: 0,
   });
+  const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
 
   const getAudioTime = 1000; //音声データの取得間隔
 
@@ -66,9 +69,9 @@ const MainFunctionCaller = () => {
   //currentTimeが変更する度に実行
   useEffect(() => {
     const nowtranscript = transcript.find(
-      (item) =>
-        Math.abs(currentTime + 3 - item.start) <= 2 ||
-        Math.abs(currentTime + 3 - item.start - item.duration) <= 2
+      (item) => Math.abs(currentTime - item.start) <= 0.6
+      //  ||
+      // Math.abs(currentTime - item.start - item.duration) <= 2
     );
 
     if (nowtranscript) {
@@ -79,17 +82,19 @@ const MainFunctionCaller = () => {
     }
   }, [currentTime]);
 
-  //
+  const currentAudio = useAudioData();
+  //今の時間に対応したstartがセットされた時に実行
   useEffect(() => {
-    const startTime = transcript.find(
-      (item) =>
-        Math.abs(currentTime + 3 - item.start) <= 0.5 ||
-        Math.abs(currentTime + 3 - item.start - item.duration) <= 0.5
-    );
+    //startと一致するwavファイルをオブジェクトから取得
+    const audioData = currentAudio.audioData[`${currentTranscript.start}`];
+    setCurrentAudioFile(audioData); //wavファイルをセット
 
-    // 以下はアクションの例
-    console.log('startTimeが変更されました:', startTime);
+    console.log('startTimeが変更されました:', currentTranscript.start);
   }, [currentTranscript.start]);
+
+  const handleFileChange = (e: any) => {
+    setCurrentAudioFile(e.target.files[0]);
+  };
 
   return (
     <div>
@@ -105,6 +110,14 @@ const MainFunctionCaller = () => {
           ? transcript.map((item, index) => <p key={index}>{item.text}</p>)
           : '字幕情報が取得できません'}
       </p>
+      <input type="file" onChange={handleFileChange} />
+      <div>
+        {currentAudioFile ? (
+          <AudioAnalyzer file={currentAudioFile} />
+        ) : (
+          <p>No audio file selected</p>
+        )}
+      </div>
     </div>
   );
 };
