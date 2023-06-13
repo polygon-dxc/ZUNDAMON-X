@@ -3,7 +3,7 @@ import { ManifestV3Export } from '@crxjs/vite-plugin';
 const manifest: ManifestV3Export = {
   manifest_version: 3,
   name: 'ZUNDAMON-X',
-  description: 'Browser Extension, TypeScript, React',
+  description: 'Listen to English videos on YouTube in Japanese',
   version: '0.1',
   permissions: ['storage', 'tabs', 'activeTab', 'scripting'],
   background: {
