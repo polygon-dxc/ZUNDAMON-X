@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { set } from 'lodash';
-
 import getTranscript from '../background/getTranscript';
 import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
 import useGetVideoId from '../background/useGetVideoId';
 import { currentTimeType, getTranscriptResponseType, videoidtype } from '../types';
+import { Card, Metric } from '@tremor/react';
 
 //Youtube再生画面を開いたらこのページ内の動作は自動で実行されます
 
@@ -81,7 +81,12 @@ const MainFunctionCaller = () => {
       <p>現在時刻：{currentTime}</p>
       <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
       <h1>NOW!字幕</h1>
-      <p>{currentTranscript.text ? currentTranscript.text : 'これはLIVE映像ですね！！'}</p>
+      <Card>
+        <Metric>
+          {currentTranscript.text ? currentTranscript.text : 'これはLIVE映像ですね！！'}
+        </Metric>
+      </Card>
+
       <p>----------------------------------------</p>
       <h1>ALL字幕</h1>
       <p>
