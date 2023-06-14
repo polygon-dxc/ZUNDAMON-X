@@ -83,8 +83,8 @@ const MainFunctionCaller = () => {
 
       //--音声の事前生成処理------------------------------------------------------
       //現在の再生時刻から20秒前後の字幕の時間を取得する処理
-      const upperLimitTime = currentTime + 20;
-      const lowerLimitTime = currentTime - 20;
+      const upperLimitTime = currentTime + 2;
+      const lowerLimitTime = currentTime - 0;
       // transcriptの各要素について以下の処理を実行
       const timeRangeIndices = transcript
         // map関数で配列の各要素とそのインデックスを取得
@@ -118,8 +118,8 @@ const MainFunctionCaller = () => {
             //getAudio(transcript[item].text, transcript[item].start);
           } else {
             //音声データ2回目以降はスルー
-            console.log('音声データの生成中です...');
-            console.log(count);
+            //console.log('音声データの生成中です...');
+            //console.log(count);
           }
         }
 
@@ -143,7 +143,7 @@ const MainFunctionCaller = () => {
     const audioData = currentAudio.audioData[`${currentTranscript.start}`];
     setCurrentAudioFile(audioData); //wavファイルをセット
 
-    console.log('startTimeが変更されました:', currentTranscript.start);
+    //console.log('startTimeが変更されました:', currentTranscript.start);
   }, [currentTranscript.start]);
 
   const handleFileChange = (e: any) => {
@@ -190,26 +190,5 @@ const MainFunctionCaller = () => {
     </div>
   );
 };
-
-//getVideoCurrentTime() を実行してcurrentTimeに格納
-
-//URLから動画IDを取得し字幕データの配列を獲得
-
-/*
-(transcript.find(() => {
-
-})
-*/
-
-//字幕の配列のうち最初の５つを音声生成に突っ込む
-
-//再生時間の監視
-//配列の機能 list
-
-/*
-while (currentTime - start < 1) {
-
-}
-*/
 
 export default MainFunctionCaller;
