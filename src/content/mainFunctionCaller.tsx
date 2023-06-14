@@ -23,6 +23,7 @@ const MainFunctionCaller = () => {
   const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
   const { audioData, getAudio } = useAudioData();
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
+  const [count, setCount] = useState<number>(0);
 
   const getAudioTime = 1000; //音声データの取得間隔
 
@@ -81,20 +82,12 @@ const MainFunctionCaller = () => {
       //音声生成範囲の閾値
       const upperLimitTime = currentTime + 20;
       const lowerLimitTime = currentTime - 20;
-      // transcriptの各要素について以下の処理を実行
       const timeRangeIndices = transcript
-        // map関数で配列の各要素とそのインデックスを取得
-        .map(
-          (item, index) =>
-            // 条件判定でstartが指定した範囲内（lowerLimitTimeとupperLimitTimeの間）にあるかどうか確認
-            item.start >= lowerLimitTime && item.start <= upperLimitTime
-              ? index // 条件を満たす場合、その要素のインデックスを返す
-              : -1 // 条件を満たさない場合、-1を返す
+        .map((item, index) =>
+          item.start >= lowerLimitTime && item.start <= upperLimitTime ? index : -1
         )
-        // filter関数で配列から-1（条件を満たさない要素）を除去
         .filter((index) => index !== -1);
       const rangeData: getTranscriptResponseType[] = timeRangeIndices.map((item) => {
-        //音声データを生成
         //重複生成を防ぐ分岐１
         if (transcript[item].start in audioData) {
           // console.log("getAudio処理完了済");
@@ -102,9 +95,9 @@ const MainFunctionCaller = () => {
           //重複生成を防ぐ分岐２
           if (!createdAudioIndex.includes(transcript[item].start)) {
             //音声データ1回目の生成
-            setCreatedAudioIndex([...createdAudioIndex, transcript[item].start]);
-            console.log(transcript[item].text);
-            //console.log('音声データ生成');
+            setCreatedAudioIndex([...createdAudioIndex, transcript[item].start]); //生成済みstartを記録
+            console.log(transcript[item].text); //console.log('音声データ生成');
+            setCount(count + 1);
             //getAudio(transcript[item].text, transcript[item].start);
           } else {
             //console.log('スルー');
@@ -140,6 +133,7 @@ const MainFunctionCaller = () => {
   return (
     <div style={{ color: 'white' }}>
       <Card>
+        <p>Count：{count}</p>
         <p>VideoID：{video.videoId ? video.videoId : ''}</p>
         <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
         <p>現在時刻：{currentTime.toFixed(3)}</p>
