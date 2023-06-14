@@ -1,3 +1,4 @@
+/*
 import { useState } from 'react';
 import { audioDataObject } from '../types';
 
@@ -14,7 +15,7 @@ const useAudioData = () => {
         return res.arrayBuffer();
       })
       .then((buffer: ArrayBuffer) => {
-        /* 音声データの変換処理 */
+        // 音声データの変換処理
         const wavFile = new File([buffer], 'filename.wav', { type: 'audio/wav' }); // bufferからwavファイルを作成
 
         setAudioData((prevData) => ({
@@ -30,3 +31,32 @@ const useAudioData = () => {
 };
 
 export default useAudioData;
+*/
+
+import { selector } from 'recoil';
+import { audioDataState } from '../atom';
+
+export const getAudioSelector = selector({
+  key: 'getAudioSelector',
+  get: () => {
+    return (subtitle: string, start: number) => {
+      fetch(
+        'https://asia-northeast1-zundamon-x.cloudfunctions.net/zundamon-api-proxy/voice?message=' +
+          subtitle
+      )
+        .then((res: Response) => res.arrayBuffer())
+        .then((buffer: ArrayBuffer) => {
+          /* 音声データの変換処理 */
+          const wavFile = new File([buffer], 'filename.wav', { type: 'audio/wav' }); // bufferからwavファイルを作成
+
+          // Recoilの状態を更新
+          RecoilSnapshot.getLoadable(audioDataState).contents(({ set }) => {
+            set(audioDataState, (prevData) => ({
+              ...prevData,
+              [`${start}`]: wavFile, // data[startの時間] = wavファイル
+            }));
+          });
+        });
+    };
+  },
+});
