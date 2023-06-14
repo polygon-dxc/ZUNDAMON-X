@@ -105,7 +105,7 @@ const MainFunctionCaller = () => {
           console.log('前！', item);
         } else {
           // //同じ音声データの生成を防ぐ処理
-          if (createdAudioIndex != item) {
+          if (createdAudioIndex != item + 1) {
             console.log('中！', item);
             //音声データ1回目の生成
             setCount(count + 1);
