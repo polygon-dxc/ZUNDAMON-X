@@ -83,8 +83,8 @@ const MainFunctionCaller = () => {
 
       //--音声の事前生成処理------------------------------------------------------
       //現在の再生時刻から20秒前後の字幕の時間を取得する処理
-      const upperLimitTime = currentTime + 2;
-      const lowerLimitTime = currentTime - 0;
+      const upperLimitTime = currentTime + 10;
+      const lowerLimitTime = currentTime - 2;
       // transcriptの各要素について以下の処理を実行
       const timeRangeIndices = transcript
         // map関数で配列の各要素とそのインデックスを取得
@@ -109,10 +109,10 @@ const MainFunctionCaller = () => {
             //console.log('中！', item);
             //音声データ1回目の生成
             setCount(count + 1);
-            console.log(count);
+            //console.log(count);
             setCreatedAudioIndex(item);
             //console.log('後！', item);
-            console.log('音声データ生成生成生成生成！！！！！！！！！');
+            //console.log('音声データ生成生成生成生成！！！！！！！！！');
             console.log(transcript[item].text);
             //getAudio('こんにちは', 1);
             //getAudio(transcript[item].text, transcript[item].start);
