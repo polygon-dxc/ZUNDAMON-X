@@ -22,8 +22,7 @@ const MainFunctionCaller = () => {
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
   const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
   const { audioData, getAudio } = useAudioData();
-  const [createdAudioIndex, setCreatedAudioIndex] = useState<number>(-1);
-  const [count, setCount] = useState<number>(0);
+  const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
 
   const getAudioTime = 1000; //音声データの取得間隔
 
@@ -38,7 +37,6 @@ const MainFunctionCaller = () => {
       //字幕データを取得
       getTranscript(video).then((result) => {
         setTranscript(result);
-        //console.log('videoID:' + result);
       });
 
       const unsubscribe = setInterval(() => {
@@ -47,17 +45,15 @@ const MainFunctionCaller = () => {
         getVideoCurrentTime().then((result) => {
           if (typeof result === 'number') {
             setCurrentTime(result);
-            //console.log(result);
           } else {
-            console.log('error');
+            console.log('再生時刻取得error');
           }
           //現在の再生状態を取得
           getPlaybackStatus().then((result) => {
             if (typeof result === 'boolean') {
               setPlaybackStatus(result);
-              //console.log(result);
             } else {
-              console.log('error');
+              console.log('再生状態取得error');
             }
           });
         });
@@ -78,11 +74,11 @@ const MainFunctionCaller = () => {
       if (nowtranscript) {
         setCurrentTranscript(nowtranscript); //現在の字幕をセット
       } else {
-        //console.log('条件に合う字幕は見つかりませんでした');
+        //console.log('近くに字幕がない！');
       }
 
       //--音声の事前生成処理------------------------------------------------------
-      //現在の再生時刻から20秒前後の字幕の時間を取得する処理
+      //音声生成範囲の閾値
       const upperLimitTime = currentTime + 10;
       const lowerLimitTime = currentTime - 2;
       // transcriptの各要素について以下の処理を実行
@@ -98,31 +94,22 @@ const MainFunctionCaller = () => {
         // filter関数で配列から-1（条件を満たさない要素）を除去
         .filter((index) => index !== -1);
       const rangeData: getTranscriptResponseType[] = timeRangeIndices.map((item) => {
-        //未生成の音声データを生成
+        //音声データを生成
+        //重複生成を防ぐ分岐１
         if (transcript[item].start in audioData) {
-          // 音声データがキャッシュに存在する場合
-          //console.log('音声データがキャッシュに存在します.');
-          //console.log('前！', item);
+          // console.log("getAudio処理完了済");
         } else {
-          // //同じ音声データの生成を防ぐ処理
-          if (createdAudioIndex != item) {
-            //console.log('中！', item);
+          //重複生成を防ぐ分岐２
+          if (!createdAudioIndex.includes(transcript[item].start)) {
             //音声データ1回目の生成
-            setCount(count + 1);
-            //console.log(count);
-            setCreatedAudioIndex(item);
-            //console.log('後！', item);
-            //console.log('音声データ生成生成生成生成！！！！！！！！！');
+            setCreatedAudioIndex([...createdAudioIndex, transcript[item].start]);
             console.log(transcript[item].text);
-            //getAudio('こんにちは', 1);
+            //console.log('音声データ生成');
             //getAudio(transcript[item].text, transcript[item].start);
           } else {
-            //音声データ2回目以降はスルー
-            //console.log('音声データの生成中です...');
-            //console.log(count);
+            //console.log('スルー');
           }
         }
-
         return {
           text: transcript[item].text,
           start: transcript[item].start,
