@@ -38,7 +38,7 @@ const MainFunctionCaller = () => {
       //字幕データを取得
       getTranscript(video).then((result) => {
         setTranscript(result);
-        console.log('videoID:' + result);
+        //console.log('videoID:' + result);
       });
 
       const unsubscribe = setInterval(() => {
@@ -47,7 +47,7 @@ const MainFunctionCaller = () => {
         getVideoCurrentTime().then((result) => {
           if (typeof result === 'number') {
             setCurrentTime(result);
-            console.log(result);
+            //console.log(result);
           } else {
             console.log('error');
           }
@@ -55,7 +55,7 @@ const MainFunctionCaller = () => {
           getPlaybackStatus().then((result) => {
             if (typeof result === 'boolean') {
               setPlaybackStatus(result);
-              console.log(result);
+              //console.log(result);
             } else {
               console.log('error');
             }
@@ -78,7 +78,7 @@ const MainFunctionCaller = () => {
       if (nowtranscript) {
         setCurrentTranscript(nowtranscript); //現在の字幕をセット
       } else {
-        console.log('条件に合う字幕は見つかりませんでした');
+        //console.log('条件に合う字幕は見つかりませんでした');
       }
 
       //--音声の事前生成処理------------------------------------------------------
@@ -101,23 +101,25 @@ const MainFunctionCaller = () => {
         //未生成の音声データを生成
         if (transcript[item].start in audioData) {
           // 音声データがキャッシュに存在する場合
-          console.log('音声データがキャッシュに存在します.');
-          console.log('前！', item);
+          //console.log('音声データがキャッシュに存在します.');
+          //console.log('前！', item);
         } else {
           // //同じ音声データの生成を防ぐ処理
-          if (createdAudioIndex != item + 1) {
-            console.log('中！', item);
+          if (createdAudioIndex != item) {
+            //console.log('中！', item);
             //音声データ1回目の生成
             setCount(count + 1);
             console.log(count);
             setCreatedAudioIndex(item);
-            console.log('後！', item);
+            //console.log('後！', item);
             console.log('音声データ生成生成生成生成！！！！！！！！！');
+            console.log(transcript[item].text);
             //getAudio('こんにちは', 1);
             //getAudio(transcript[item].text, transcript[item].start);
           } else {
             //音声データ2回目以降はスルー
             console.log('音声データの生成中です...');
+            console.log(count);
           }
         }
 
