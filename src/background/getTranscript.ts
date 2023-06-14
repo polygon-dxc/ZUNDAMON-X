@@ -31,7 +31,8 @@ async function getTranscript({ videoId }: videoidtype) {
   */
 
   try {
-    const response = await axios.get(`http://127.0.0.1:8000/transcript/`, {
+    const response = await axios.get(`http://133.55.199.120:8000/transcript/`, {
+      //ゆら ローカル http://127.0.0.1:8000/transcript/
       params: {
         id: videoId,
       },

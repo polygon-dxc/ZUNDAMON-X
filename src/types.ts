@@ -12,3 +12,7 @@ export type getTranscriptResponseType = {
   start: number;
   duration: number;
 };
+
+export type audioDataObject = {
+  [startTime: string]: File;
+};
