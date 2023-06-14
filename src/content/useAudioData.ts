@@ -23,7 +23,7 @@ const useAudioData = () => {
       });
   };
 
-  // console.log(audioDataObject);
+  // console.log(audioData);
 
   return { audioData, getAudio };
 };
