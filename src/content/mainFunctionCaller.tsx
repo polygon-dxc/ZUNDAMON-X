@@ -8,7 +8,7 @@ import { Card, Metric } from '@tremor/react';
 import useAudioData from './useAudioData';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
 
-//Youtube再生画面を開いたらこのページ内の動作は自動で実行されます
+//Youtube再生画面を開いたら実行されます
 
 const MainFunctionCaller = () => {
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -95,9 +95,10 @@ const MainFunctionCaller = () => {
           //重複生成を防ぐ分岐２
           if (!createdAudioIndex.includes(transcript[item].start)) {
             //音声データ1回目の生成
-            setCreatedAudioIndex([...createdAudioIndex, transcript[item].start]); //生成済みstartを記録
-            console.log(transcript[item].text); //console.log('音声データ生成');
             setCount(count + 1);
+            setCreatedAudioIndex([...createdAudioIndex, transcript[item].start]); //生成済みstartを記録
+            console.log(count, transcript[item].text); //console.log('音声データ生成');
+
             //getAudio(transcript[item].text, transcript[item].start);
           } else {
             //console.log('スルー');
