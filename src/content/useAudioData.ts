@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { audioDataObject } from '../types';
 
+// 字幕から音声ファイルの生成 + 音声データをstateに保存する処理
 const useAudioData = () => {
   const [audioData, setAudioData] = useState<audioDataObject>({});
 
