@@ -79,8 +79,8 @@ const MainFunctionCaller = () => {
 
       //--音声の事前生成処理------------------------------------------------------
       //音声生成範囲の閾値
-      const upperLimitTime = currentTime + 10;
-      const lowerLimitTime = currentTime - 2;
+      const upperLimitTime = currentTime + 20;
+      const lowerLimitTime = currentTime - 20;
       // transcriptの各要素について以下の処理を実行
       const timeRangeIndices = transcript
         // map関数で配列の各要素とそのインデックスを取得
