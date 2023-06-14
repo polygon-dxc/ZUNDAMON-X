@@ -5,6 +5,9 @@ import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCu
 import useGetVideoId from '../background/useGetVideoId';
 import { currentTimeType, getTranscriptResponseType, videoidtype } from '../types';
 import { Card, Metric } from '@tremor/react';
+import useAudioData from './useAudioData';
+import AudioAnalyzer from '../popup/AudioAnalyzer';
+
 
 //Youtube再生画面を開いたらこのページ内の動作は自動で実行されます
 
@@ -17,6 +20,9 @@ const MainFunctionCaller = () => {
     start: 0,
     duration: 0,
   });
+  const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
+
+  const getAudioTime = 1000; //音声データの取得間隔
 
   //VideoIDを取得
   //videoIdのオブジェクト生成
@@ -34,6 +40,7 @@ const MainFunctionCaller = () => {
 
       const unsubscribe = setInterval(() => {
         //contentアクセス後、毎秒実行
+        //現在の再生時刻を取得
         getVideoCurrentTime().then((result) => {
           if (typeof result === 'number') {
             setCurrentTime(result);
@@ -41,6 +48,7 @@ const MainFunctionCaller = () => {
           } else {
             console.log('error');
           }
+          //現在の再生状態を取得
           getPlaybackStatus().then((result) => {
             if (typeof result === 'boolean') {
               setPlaybackStatus(result);
@@ -48,11 +56,9 @@ const MainFunctionCaller = () => {
             } else {
               console.log('error');
             }
-
-            //ここに追加
           });
         });
-      }, 1000);
+      }, getAudioTime);
       return () => {
         //タイマーを消す
         clearInterval(unsubscribe);
@@ -62,6 +68,7 @@ const MainFunctionCaller = () => {
 
   //currentTimeが変更する度に実行
   useEffect(() => {
+
     if (currentTime && transcript) {
       const nowtranscript = transcript.find((item) => Math.abs(currentTime - item.start) <= 0.5);
 
@@ -74,6 +81,20 @@ const MainFunctionCaller = () => {
       console.log('字幕情報が取得できません');
     }
   }, [currentTime]);
+
+  const currentAudio = useAudioData();
+  //今の時間に対応したstartがセットされた時に実行
+  useEffect(() => {
+    //startと一致するwavファイルをオブジェクトから取得
+    const audioData = currentAudio.audioData[`${currentTranscript.start}`];
+    setCurrentAudioFile(audioData); //wavファイルをセット
+
+    console.log('startTimeが変更されました:', currentTranscript.start);
+  }, [currentTranscript.start]);
+
+  const handleFileChange = (e: any) => {
+    setCurrentAudioFile(e.target.files[0]);
+  };
 
   return (
     <div>
@@ -94,6 +115,14 @@ const MainFunctionCaller = () => {
           ? transcript.map((item, index) => <p key={index}>{item.text}</p>)
           : '字幕情報が取得できません'}
       </p>
+      <input type="file" onChange={handleFileChange} />
+      <div>
+        {currentAudioFile ? (
+          <AudioAnalyzer file={currentAudioFile} />
+        ) : (
+          <p>No audio file selected</p>
+        )}
+      </div>
     </div>
   );
 };

@@ -4,17 +4,17 @@ const manifest: ManifestV3Export = {
   manifest_version: 3,
   name: 'ZUNDAMON-X',
   description: 'Listen to English videos on YouTube in Japanese',
-  version: '0.1',
+  version: '0.2',
+  content_scripts: [
+    {
+      matches: ['*://*.youtube.com/*'],
+      js: ['src/content/index.tsx'],
+    },
+  ],
   permissions: ['storage', 'tabs', 'activeTab', 'scripting'],
   background: {
     service_worker: 'src/background/index.ts',
   },
-  content_scripts: [
-    {
-      matches: ['http://*/*', 'https://*/*', 'file:///*'],
-      js: ['src/content/index.tsx'],
-    },
-  ],
   host_permissions: ['<all_urls>'],
   options_ui: {
     page: 'src/options/options.html',

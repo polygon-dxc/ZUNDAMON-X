@@ -1,11 +1,8 @@
 import { useState } from 'react';
-
-type Props = {
-  [startTime: string]: File;
-};
+import { audioDataObject } from '../types';
 
 const useAudioData = () => {
-  const [data, setData] = useState<Props>({});
+  const [audioData, setAudioData] = useState<audioDataObject>({});
 
   const getAudio = (subtitle: string, start: number) => {
     fetch(
@@ -19,16 +16,16 @@ const useAudioData = () => {
         /* 音声データの変換処理 */
         const wavFile = new File([buffer], 'filename.wav', { type: 'audio/wav' }); // bufferからwavファイルを作成
 
-        setData((prevData) => ({
+        setAudioData((prevData) => ({
           ...prevData,
           [`${start}`]: wavFile, // data[startの時間] = wavファイル
         }));
       });
   };
 
-  console.log(data);
+  // console.log(audioData);
 
-  return { data, getAudio };
+  return { audioData, getAudio };
 };
 
 export default useAudioData;
