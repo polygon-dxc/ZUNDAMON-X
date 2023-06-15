@@ -3,7 +3,7 @@ import { set } from 'lodash';
 import getTranscript from '../background/getTranscript';
 import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
 import useGetVideoId from '../background/useGetVideoId';
-import { currentTimeType, getTranscriptResponseType, videoidtype } from '../types';
+import { getTranscriptResponseType, videoidtype } from '../types';
 import { Card, Metric } from '@tremor/react';
 import useAudioData from './useAudioData';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
@@ -23,7 +23,6 @@ const MainFunctionCaller = () => {
   const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
   const { audioData, getAudio } = useAudioData();
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
-  const [count, setCount] = useState<number>(0);
 
   const getAudioTime = 1000; //音声データの取得間隔
 
@@ -80,8 +79,9 @@ const MainFunctionCaller = () => {
 
       //--音声の事前生成処理------------------------------------------------------
       //音声生成範囲の閾値
-      const upperLimitTime = currentTime + 20;
-      const lowerLimitTime = currentTime - 20;
+
+      const upperLimitTime = currentTime + 30;
+      const lowerLimitTime = currentTime - 15;
       const timeRangeIndices = transcript
         .map((item, index) =>
           item.start >= lowerLimitTime && item.start <= upperLimitTime ? index : -1
@@ -89,21 +89,24 @@ const MainFunctionCaller = () => {
         .filter((index) => index !== -1);
       const rangeData: getTranscriptResponseType[] = timeRangeIndices.map((item) => {
         //重複生成を防ぐ分岐１
-        if (transcript[item].start in audioData) {
-          // console.log("getAudio処理完了済");
-        } else {
-          //重複生成を防ぐ分岐２
-          if (!createdAudioIndex.includes(transcript[item].start)) {
-            //音声データ1回目の生成
-            setCount(count + 1);
-            setCreatedAudioIndex([...createdAudioIndex, transcript[item].start]); //生成済みstartを記録
-            console.log(count, transcript[item].text); //console.log('音声データ生成');
+        // if (transcript[item].start in audioData) {
+        //   // console.log("getAudio処理完了済");
+        //   console.log(audioData)
+        // } else {
+        //重複生成を防ぐ分岐２
+        if (!createdAudioIndex.includes(transcript[item].start)) {
+          //音声データ1回目の生成
+          setCreatedAudioIndex((prevCreatedAudioIndex) => [
+            ...prevCreatedAudioIndex,
+            transcript[item].start,
+          ]); //生成済みstartを記録
+          console.log(transcript[item].text); //console.log('音声データ生成');
 
-            //getAudio(transcript[item].text, transcript[item].start);
-          } else {
-            //console.log('スルー');
-          }
+          //getAudio(transcript[item].text, transcript[item].start);
+        } else {
+          //console.log('スルー');
         }
+        //}
         return {
           text: transcript[item].text,
           start: transcript[item].start,
@@ -134,7 +137,7 @@ const MainFunctionCaller = () => {
   return (
     <div style={{ color: 'white' }}>
       <Card>
-        <p>Count：{count}</p>
+        <p>Count：</p>
         <p>VideoID：{video.videoId ? video.videoId : ''}</p>
         <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
         <p>現在時刻：{currentTime.toFixed(3)}</p>

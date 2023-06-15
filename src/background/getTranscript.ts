@@ -15,7 +15,7 @@ async function getTranscript({ videoId }: videoidtype) {
     },
 
   //GCPアクセス字幕API.ver2
-  const response = await axios.get(`https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy/transcript`, {
+  const response = await axios.get(`https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy`, {
     params: {
       videoId: videoId,
     },
@@ -31,14 +31,13 @@ async function getTranscript({ videoId }: videoidtype) {
   */
 
   try {
-    const response = await axios.get(`http://133.55.199.120:8000/transcript/`, {
-      //ゆら ローカル http://127.0.0.1:8000/transcript/
-      params: {
-        id: videoId,
-      },
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy?videoId=` + videoId,
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        withCredentials: true,
+      }
+    );
 
     // The data property of the response will contain the transcript
     const transcript = response.data;
