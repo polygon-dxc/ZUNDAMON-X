@@ -5,8 +5,9 @@ import getTranscript from '../background/getTranscript';
 import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
 import useGetVideoId from '../background/useGetVideoId';
 import { currentTimeType, getTranscriptResponseType, videoidtype } from '../types';
-import useAudioData from './useAudioData';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
+import { audioDataState } from '../atom';
+import { useRecoilValue } from 'recoil';
 
 //Youtube再生画面を開いたらこのページ内の動作は自動で実行されます
 
@@ -22,7 +23,8 @@ const MainFunctionCaller = () => {
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
 
   const getAudioTime = 1000; //音声データの取得間隔
-  const { audioData } = useAudioData();
+  // const { audioData } = useAudioData();
+  const audioData = useRecoilValue(audioDataState); //音声データの取得
 
   //VideoIDを取得
   //videoIdのオブジェクト生成
