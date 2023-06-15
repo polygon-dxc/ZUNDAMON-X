@@ -3,14 +3,19 @@ import React, { ReactElement } from 'react';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
 
 import { Counter } from './features/counter';
-import useAudioData from './useAudioData';
+// import getAudioData from './getAudioData';
+import useAudioData from '../background/useAudioData';
+import { audioDataState } from '../atom';
+import { useRecoilValue } from 'recoil';
 
 const Content = (): ReactElement => {
-  const { audioData, getAudio } = useAudioData();
+  // const { audioData, getAudio } = useAudioData();
+  const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
+  const audioData = useRecoilValue(audioDataState);
 
   /* 動作確認用 */
   const handleClick = () => {
-    getAudio('こんにちは', 1); // useAudioDataフックを呼び出す
+    getAudioData('こんにちは', 1); // useAudioDataフックを呼び出す
   };
 
   return (
@@ -20,7 +25,7 @@ const Content = (): ReactElement => {
         zIndex: 999,
         bottom: 0,
         right: 0,
-        backgroundColor: 'rgb(0 0 0 / 30%)',
+        backgroundColor: 'rgb(255 255 255 / 30%)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'center' }}>Content Example</div>
