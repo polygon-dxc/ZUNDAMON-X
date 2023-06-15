@@ -25,7 +25,7 @@ function useGetVideoId() {
     };
   }, []);
 
-  console.log(videoIdInfo);
+  //console.log(videoIdInfo);
   return videoIdInfo;
 }
 
