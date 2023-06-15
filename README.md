@@ -7,7 +7,7 @@
   </h2>
 </div>
 
-<p align="center">A cross-platform (Chrome, Firefox, Edge, Opera, Brave) web browser extension (Manifest V3 and Manifest V2) starter kit with hot reload support, built with React, Typescript, Redux, Vite, ESLint, Prettier, TailwindCSS, Jest and more! </p>
+<!-- <p align="center">A cross-platform (Chrome, Firefox, Edge, Opera, Brave) web browser extension (Manifest V3 and Manifest V2) starter kit with hot reload support, built with React, Typescript, Redux, Vite, ESLint, Prettier, TailwindCSS, Jest and more! </p>
 <hr />
 
 <div align="center" >
@@ -151,8 +151,8 @@ Please use with caution.
 
 ## Contributing
 
-This repository is following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard.
+This repository is following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. -->
 
 ## License
 
-MIT © [Sinan Bekar](https://sinan.engineer)
+POLYGON 2023
