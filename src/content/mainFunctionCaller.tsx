@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { set } from 'lodash';
-
+import { getTranscriptResponseType, videoidtype } from '../types';
 import getTranscript from '../background/getTranscript';
-import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
 import useGetVideoId from '../background/useGetVideoId';
-import { currentTimeType, getTranscriptResponseType, videoidtype } from '../types';
+import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
 import { audioDataState } from '../atom';
 import { useRecoilValue } from 'recoil';
+import useAudioData from '../background/useAudioData';
 
 //Youtube再生画面を開いたらこのページ内の動作は自動で実行されます
 
@@ -23,8 +22,8 @@ const MainFunctionCaller = () => {
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
 
   const getAudioTime = 1000; //音声データの取得間隔
-  // const { audioData } = useAudioData();
-  const audioData = useRecoilValue(audioDataState); //音声データの取得
+  const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
+  const audioData = useRecoilValue(audioDataState);
 
   //VideoIDを取得
   //videoIdのオブジェクト生成
@@ -96,7 +95,7 @@ const MainFunctionCaller = () => {
     */
   }, [currentTime]);
 
-  /* 今の保持しているstartに対応した音声データを取得 */
+  /* 今の保持しているstartに対応した音声データをstateから取得 */
   useEffect(() => {
     const currentAudioData = audioData[`${currentTranscript.start}`]; //startに対応したwavファイルを取得
     setCurrentAudioFile(currentAudioData); //wavファイルをセット

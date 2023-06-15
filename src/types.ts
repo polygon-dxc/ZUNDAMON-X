@@ -14,5 +14,5 @@ export type getTranscriptResponseType = {
 };
 
 export type audioDataObject = {
-  [startTime: string]: File;
+  [startTime: number]: File;
 };
