@@ -84,42 +84,53 @@ const MainFunctionCaller = () => {
       const upperLimitTime = currentTime + 20;
       const lowerLimitTime = currentTime - 15;
       //ほしい物リストの検索
-      const wishlist = transcript
+      const tmpWishlist = transcript
         .map((item, index) =>
           item.start >= lowerLimitTime && item.start <= upperLimitTime ? index : -1
         )
         .filter((index) => index !== -1);
 
-      setWishList(wishlist); //ほしい物リストの更新
-      console.log('ほしい物リスト');
+      setWishList(tmpWishlist); //ほしい物リストの更新
     }
   }, [currentTime]);
 
   //音声データの新規生成と削除------------------------------------------
   useEffect(() => {
-    const rangeData: getTranscriptResponseType[] = wishList.map((item) => {
-      console.log(wishList[item]);
-      if (!createdAudioIndex.includes(transcript[item].start)) {
-        //音声データの削除
-        //console.log('音声データ削除', transcript[item].text);
-      } else if (!wishList.includes(createdAudioIndex[item])) {
-        //音声データ1回目の生成
-        setCreatedAudioIndex((prevCreatedAudioIndex) => [
-          //生成済みstartを記録
-          ...prevCreatedAudioIndex,
-          transcript[item].start,
-        ]); //生成済みstartを記録
-        //console.log('音声データ生成', transcript[item].text); //console.log('音声データ生成');
-        //getAudio(transcript[item].text, transcript[item].start);
+    console.log('ほしい物リスト', wishList);
+
+    let tmpCreatedList = [...createdAudioIndex];
+    let tmpTSdisplay: getTranscriptResponseType[] = [];
+
+    wishList.forEach((item) => {
+      const findText = transcript[item];
+
+      if (findText) {
+        if (!createdAudioIndex.find((_) => _ == findText.start)) {
+          console.log('作る', findText.text);
+          // let _createdAudioIndex = [...createdAudioIndex];
+          // _createdAudioIndex.push(findText.start);
+          setCreatedAudioIndex((createdAudioIndex) => {
+            let _createdAudioIndex = [...createdAudioIndex];
+
+            _createdAudioIndex.push(findText.start);
+            return _createdAudioIndex;
+          });
+        } else {
+          tmpCreatedList = tmpCreatedList.filter((_) => _ !== findText.start);
+        }
+        tmpTSdisplay.push(findText);
       }
-      return {
-        text: transcript[item].text,
-        start: transcript[item].start,
-        duration: transcript[item].duration,
-      };
+      return;
     });
-    setTSdisplay(rangeData); //読み込み予定の字幕を更新
-  }, [wishList]);
+    console.log('消す', tmpCreatedList);
+    //消す　(tmpCreatedList])
+    setCreatedAudioIndex((_) => {
+      let _createdAudioIndex = [..._];
+      _createdAudioIndex = _createdAudioIndex.filter((_) => !tmpCreatedList.includes(_));
+      return _createdAudioIndex;
+    }); //作成済みの音声データの更新
+    setTSdisplay(tmpTSdisplay); //読み込み予定の字幕を更新
+  }, [wishList[0]]);
 
   //音声の再生------------------------------------------
   const currentAudio = useAudioData();
@@ -144,6 +155,13 @@ const MainFunctionCaller = () => {
         <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
         <p>現在時刻：{currentTime.toFixed(3)}</p>
         <p>現在時刻+20：{(currentTime + 20).toFixed(3)}</p>
+        <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
+        <p>----------------------------------------</p>
+        <h1>NOW!字幕</h1>
+        <Metric>
+          {currentTranscript.text ? currentTranscript.text : 'これはLIVE映像ですね！！'}
+        </Metric>
+
         <p>字幕取得時間範囲</p>
         <div className="text-base ">
           <p>
@@ -157,14 +175,6 @@ const MainFunctionCaller = () => {
           </p>
         </div>
 
-        <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
-        <h1>NOW!字幕</h1>
-
-        <Metric>
-          {currentTranscript.text ? currentTranscript.text : 'これはLIVE映像ですね！！'}
-        </Metric>
-
-        <p>----------------------------------------</p>
         <h1>ALL字幕</h1>
         <p>
           {transcript
