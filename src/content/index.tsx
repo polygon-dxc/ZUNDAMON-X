@@ -1,11 +1,14 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { RecoilRoot } from 'recoil';
 
 import Content from './Content';
 
-// プロキシストアの準備処理が必要な場合はここに記述する
-
-const component = <Content />;
+const component = (
+  <RecoilRoot>
+    <Content />
+  </RecoilRoot>
+);
 
 const container = document.createElement('my-extension-root');
 document.body.append(container);
