@@ -20,9 +20,10 @@ const MainFunctionCaller = () => {
     duration: 0,
   });
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
-  const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
+  const [TSdisplay, setTSdisplay] = useState<getTranscriptResponseType[]>([]);
   const { audioData, getAudio } = useAudioData();
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
+  const [wishList, setWishList] = useState<number[]>([]);
 
   const getAudioTime = 1000; //音声データの取得間隔
 
@@ -78,46 +79,47 @@ const MainFunctionCaller = () => {
       }
 
       //--音声の事前生成処理------------------------------------------------------
-      //音声生成範囲の閾値
 
-      const upperLimitTime = currentTime + 30;
+      //ほしい物リストの範囲
+      const upperLimitTime = currentTime + 20;
       const lowerLimitTime = currentTime - 15;
-      const timeRangeIndices = transcript
+      //ほしい物リストの検索
+      const wishlist = transcript
         .map((item, index) =>
           item.start >= lowerLimitTime && item.start <= upperLimitTime ? index : -1
         )
         .filter((index) => index !== -1);
-      const rangeData: getTranscriptResponseType[] = timeRangeIndices.map((item) => {
-        //重複生成を防ぐ分岐１
-        // if (transcript[item].start in audioData) {
-        //   // console.log("getAudio処理完了済");
-        //   console.log(audioData)
-        // } else {
-        //重複生成を防ぐ分岐２
-        if (!createdAudioIndex.includes(transcript[item].start)) {
-          //音声データ1回目の生成
-          setCreatedAudioIndex((prevCreatedAudioIndex) => [
-            ...prevCreatedAudioIndex,
-            transcript[item].start,
-          ]); //生成済みstartを記録
-          console.log(transcript[item].text); //console.log('音声データ生成');
 
-          //getAudio(transcript[item].text, transcript[item].start);
-        } else {
-          //console.log('スルー');
-        }
-        //}
-        return {
-          text: transcript[item].text,
-          start: transcript[item].start,
-          duration: transcript[item].duration,
-        };
-      });
-      setGetrangeTS(rangeData); //range内のTranscriptをセット
-    } else {
-      console.log('字幕情報が取得できません');
+      setWishList(wishlist); //ほしい物リストの更新
+      console.log('ほしい物リスト');
     }
   }, [currentTime]);
+
+  //音声データの新規生成と削除------------------------------------------
+  useEffect(() => {
+    const rangeData: getTranscriptResponseType[] = wishList.map((item) => {
+      console.log(wishList[item]);
+      if (!createdAudioIndex.includes(transcript[item].start)) {
+        //音声データの削除
+        //console.log('音声データ削除', transcript[item].text);
+      } else if (!wishList.includes(createdAudioIndex[item])) {
+        //音声データ1回目の生成
+        setCreatedAudioIndex((prevCreatedAudioIndex) => [
+          //生成済みstartを記録
+          ...prevCreatedAudioIndex,
+          transcript[item].start,
+        ]); //生成済みstartを記録
+        //console.log('音声データ生成', transcript[item].text); //console.log('音声データ生成');
+        //getAudio(transcript[item].text, transcript[item].start);
+      }
+      return {
+        text: transcript[item].text,
+        start: transcript[item].start,
+        duration: transcript[item].duration,
+      };
+    });
+    setTSdisplay(rangeData); //読み込み予定の字幕を更新
+  }, [wishList]);
 
   //音声の再生------------------------------------------
   const currentAudio = useAudioData();
@@ -145,11 +147,13 @@ const MainFunctionCaller = () => {
         <p>字幕取得時間範囲</p>
         <div className="text-base ">
           <p>
-            {getrangeTS.map((item, index) => (
-              <p key={index}>
-                {item.start}：{item.text}
-              </p>
-            ))}
+            {TSdisplay
+              ? TSdisplay.map((item) => (
+                  <p>
+                    {item.start}：{item.text}
+                  </p>
+                ))
+              : ''}
           </p>
         </div>
 
