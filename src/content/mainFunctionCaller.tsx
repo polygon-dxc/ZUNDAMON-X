@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getTranscriptResponseType, videoidtype } from '../types';
+import { set } from 'lodash';
 import getTranscript from '../background/getTranscript';
-import useGetVideoId from '../background/useGetVideoId';
 import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
+import useGetVideoId from '../background/useGetVideoId';
+import { getTranscriptResponseType, videoidtype } from '../types';
+import { Card, Metric } from '@tremor/react';
+import useAudioData from './useAudioData';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
-import { audioDataState } from '../atom';
-import { useRecoilValue } from 'recoil';
-import useAudioData from '../background/useAudioData';
 
 //Youtube再生画面を開いたら実行されます
 
@@ -25,8 +25,6 @@ const MainFunctionCaller = () => {
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
 
   const getAudioTime = 1000; //音声データの取得間隔
-  const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
-  const audioData = useRecoilValue(audioDataState);
 
   //VideoIDを取得
   //videoIdのオブジェクト生成
@@ -119,28 +117,19 @@ const MainFunctionCaller = () => {
     } else {
       console.log('字幕情報が取得できません');
     }
-
-    // 現在時間から-5分の音声データを削除する
-    /*
-    const fiveMinutesAgo = currentTime - 300;
-    const updatedAudioData = { ...audioData };
-    Object.keys(updatedAudioData).forEach((start) => {
-      if (Number(start) <= fiveMinutesAgo) {
-        delete updatedAudioData[start];
-      }
-    });
-    */
   }, [currentTime]);
 
-  /* 今の保持しているstartに対応した音声データをstateから取得 */
+  //音声の再生------------------------------------------
+  const currentAudio = useAudioData();
+  //今の時間に対応したstartがセットされた時に実行
   useEffect(() => {
-    const currentAudioData = audioData[`${currentTranscript.start}`]; //startに対応したwavファイルを取得
-    setCurrentAudioFile(currentAudioData); //wavファイルをセット
+    //startと一致するwavファイルをオブジェクトから取得
+    const audioData = currentAudio.audioData[`${currentTranscript.start}`];
+    setCurrentAudioFile(audioData); //wavファイルをセット
 
     //console.log('startTimeが変更されました:', currentTranscript.start);
   }, [currentTranscript.start]);
 
-  // テスト用
   const handleFileChange = (e: any) => {
     setCurrentAudioFile(e.target.files[0]);
   };
