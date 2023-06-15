@@ -5,8 +5,4 @@ import Welcome from './Welcome';
 
 import '../tailwind.css';
 
-createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <Welcome />
-  </React.StrictMode>
-);
+createRoot(document.getElementById('root') as HTMLElement).render(<Welcome />);
