@@ -7,6 +7,7 @@ import AudioAnalyzer from '../popup/AudioAnalyzer';
 import { audioDataState } from '../atom';
 import { useRecoilValue } from 'recoil';
 import useAudioData from '../background/useAudioData';
+import { Card, Metric } from '@tremor/react';
 
 //Youtube再生画面を開いたら実行されます
 
@@ -21,7 +22,6 @@ const MainFunctionCaller = () => {
   });
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
   const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
-  const { audioData, getAudio } = useAudioData();
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
 
   const getAudioTime = 1000; //音声データの取得間隔
@@ -92,7 +92,7 @@ const MainFunctionCaller = () => {
       const rangeData: getTranscriptResponseType[] = timeRangeIndices.map((item) => {
         //重複生成を防ぐ分岐１
         // if (transcript[item].start in audioData) {
-        //   // console.log("getAudio処理完了済");
+        //   // console.log("getAudioData処理完了済");
         //   console.log(audioData)
         // } else {
         //重複生成を防ぐ分岐２
@@ -104,7 +104,7 @@ const MainFunctionCaller = () => {
           ]); //生成済みstartを記録
           console.log(transcript[item].text); //console.log('音声データ生成');
 
-          //getAudio(transcript[item].text, transcript[item].start);
+          //getAudioData(transcript[item].text, transcript[item].start);
         } else {
           //console.log('スルー');
         }
@@ -180,7 +180,11 @@ const MainFunctionCaller = () => {
         </p>
         <input type="file" onChange={handleFileChange} />
         <div>
-          {audioData ? <AudioAnalyzer file={audioData[1]} /> : <p>No audio file selected</p>}
+          {currentAudioFile ? (
+            <AudioAnalyzer file={currentAudioFile} />
+          ) : (
+            <p>No audio file selected</p>
+          )}
         </div>
       </Card>
     </div>
