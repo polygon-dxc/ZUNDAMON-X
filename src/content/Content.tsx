@@ -4,7 +4,6 @@ import AudioAnalyzer from '../popup/AudioAnalyzer';
 
 import { Counter } from './features/counter';
 import useAudioData from './useAudioData';
-import MainFunctionCaller from './mainFunctionCaller';
 
 const Content = (): ReactElement => {
   const { audioData, getAudio } = useAudioData();
@@ -28,7 +27,6 @@ const Content = (): ReactElement => {
       <Counter />
       <button onClick={handleClick}>audio get button</button>
       <div>{audioData ? <AudioAnalyzer file={audioData[1]} /> : <p>No audio file selected</p>}</div>
-      <MainFunctionCaller />
     </div>
   );
 };

@@ -147,7 +147,7 @@ const MainFunctionCaller = () => {
 
   return (
     <div className="text-black dark:text-white">
-      <Card className="bg-gradient-to-l hover:bg-gradient-to-r">
+      <Card className="bg-gradient-to-l md:bg-gradient-to-r">
         <div className="grid gap-6 ">
           <div className="flex">
             <button
@@ -208,9 +208,12 @@ const MainFunctionCaller = () => {
             </select>
           </div>
 
+          <div>
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-300 ">現在の字幕</p>
+          </div>
+
           <div className="flex flex-col items-start">
             <div className="overflow-auto h-52 w-64">
-              <h1>NOW!字幕</h1>
               <Metric>{currentTranscript.text ? currentTranscript.text : '読み込み中...'}</Metric>
             </div>
             <div className="flex-shrink-0 mt-4">
@@ -226,20 +229,16 @@ const MainFunctionCaller = () => {
             <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
           </div>
 
-          <div className="flex flex-col items-start">
-            <div className="overflow-auto h-52 w-64">
-              <p>字幕取得時間範囲</p>
-              <div className="text-base">
-                <p>
-                  {getrangeTS.map((item, index) => (
-                    <p key={index}>
-                      {item.start}：{item.text}
-                    </p>
-                  ))}
-                </p>
-              </div>
-            </div>
-            <div className="flex-shrink-0 mt-4">
+          <div>
+            <p>字幕取得時間範囲</p>
+            <div className="text-base">
+              <p>
+                {getrangeTS.map((item, index) => (
+                  <p key={index}>
+                    {item.start}：{item.text}
+                  </p>
+                ))}
+              </p>
               <p>----------------------------------------</p>
             </div>
           </div>
