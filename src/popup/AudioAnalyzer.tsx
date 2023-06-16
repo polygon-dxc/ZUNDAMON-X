@@ -42,10 +42,10 @@ const AudioAnalyzer: FC<Props> = ({ element }) => {
     }
     element.play();
     // 音声が再生されるたびに解析を行う
-    element.addEventListener('play', () => {
-      setInterval(analyzeAudio, 100); // 一定間隔で解析するために定期的に呼び出す
-    });
-
+    const unsubscribe = setInterval(analyzeAudio, 100); // 一定間隔で解析するために定期的に呼び出す
+    return () => {
+      clearInterval(unsubscribe);
+    };
     // const audioContext = new (window.AudioContext || window.AudioContext)();
     // const reader = new FileReader();
 
