@@ -5,7 +5,7 @@ import { videoidtype } from '../types';
 
 export const getTranscript = () =>
   chrome.runtime.onMessage.addListener(async (request) => {
-    console.log('メッセージを受け取りまあああ', request);
+    console.log('メッセージを受け取ります', request);
     // 期待通りのリクエストかどうかをチェック
     if (request.name === 'getTranscript') {
       // async function getTranscript({ videoId }: videoidtype) {
@@ -31,7 +31,6 @@ export const getTranscript = () =>
         .then((res) => {
           const transcript = res;
           chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            console.log({ tabs });
             const id = tabs[0].id as number;
 
             // content_script へデータを送る
@@ -44,7 +43,7 @@ export const getTranscript = () =>
                 },
               })
               .then((res) => {
-                console.log('メッセージを送りまああ', res);
+                console.log('メッセージを送ります', res);
               })
               .catch((err) => {
                 console.log('Error:', err);
