@@ -26,7 +26,7 @@ const Content = (): ReactElement => {
       <MainFunctionCaller />
       <div style={{ display: 'flex', justifyContent: 'center' }}>Content Example</div>
       <Counter />
-      <div>{audioData ? <AudioAnalyzer element={audioData} /> : <p>No audio file selected</p>}</div>
+      <div>{audioData ? <AudioAnalyzer src={audioData.src} /> : <p>No audio file selected</p>}</div>
     </div>
   );
 };

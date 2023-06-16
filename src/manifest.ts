@@ -11,7 +11,7 @@ const manifest: ManifestV3Export = {
       js: ['src/content/index.tsx'],
     },
   ],
-  permissions: ['storage', 'tabs', 'activeTab', 'scripting'],
+  permissions: ['<all_urls>', 'storage', 'tabs', 'activeTab', 'scripting'],
   background: {
     service_worker: 'src/background/index.ts',
   },

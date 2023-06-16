@@ -4,18 +4,18 @@ import image1 from './../../public/images/zundamon_content0000.png';
 import image2 from './../../public/images/zundamon_content0001.png';
 
 type Props = {
-  element: HTMLAudioElement | null;
+  src: string;
 };
-const AudioAnalyzer: FC<Props> = ({ element }) => {
+const AudioAnalyzer: FC<Props> = ({ src }) => {
   const [number, setNumber] = useState(image1);
   useEffect(() => {
-    if (!element) return;
+    if (!src) return;
 
     playElement();
-  }, [element?.src]);
+  }, [src]);
 
   const playElement = () => {
-    if (!element) return;
+    if (!src) return;
 
     // Audio要素を取得
 
@@ -26,7 +26,8 @@ const AudioAnalyzer: FC<Props> = ({ element }) => {
     const analyser = audioContext.createAnalyser();
 
     // Audio要素とAnalyserNodeを接続
-    const source = audioContext.createMediaElementSource(element);
+    const audio = new Audio();
+    const source = audioContext.createMediaElementSource(audio);
     source.connect(analyser);
     analyser.connect(audioContext.destination);
 
@@ -38,11 +39,17 @@ const AudioAnalyzer: FC<Props> = ({ element }) => {
 
       // 解析結果を使用して何らかの処理を行う
       // ここでは簡単に周波数スペクトルをコンソールに出力しています
-      console.log(dataArray);
+      // console.log(dataArray);
     }
-    element.play();
+
+    audio.src = src;
+    audio.onload = () => {
+      console.log('playing');
+      audio;
+    };
+    audio.play();
     // 音声が再生されるたびに解析を行う
-    element.addEventListener('play', () => {
+    audio.addEventListener('play', () => {
       setInterval(analyzeAudio, 100); // 一定間隔で解析するために定期的に呼び出す
     });
 
