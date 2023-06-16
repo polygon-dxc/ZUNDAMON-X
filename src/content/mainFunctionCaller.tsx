@@ -27,7 +27,7 @@ const MainFunctionCaller = () => {
     duration: 0,
   });
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
-
+  const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
   const [TSdisplay, setTSdisplay] = useState<getTranscriptResponseType[]>([]);
   // const { audioData, getAudio } = useAudioData();
 
