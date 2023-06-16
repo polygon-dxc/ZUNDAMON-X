@@ -15,7 +15,7 @@ const MainFunctionCaller = () => {
   const [allAudioData, setAllAudioData] = useRecoilState(audioDataState);
   const { currentTime } = useGetVideoStatus();
   const videoId = useGetVideoId();
-  const transcript = useGetTranscript(videoId);
+  const transcript = useGetTranscript(videoId.videoId);
   const [createdAudioIndexArray, setCreatedAudioIndexArray] = useState<number[]>([]);
 
   const currentTranscript = transcript.find(
@@ -25,7 +25,7 @@ const MainFunctionCaller = () => {
 
   //currentTimeが変更する度に実行
   useEffect(() => {
-    if (!transcript || !currentTime) return;
+    if (!transcript || !currentTime || !videoId.videoId) return;
 
     //ほしい物リストの範囲
     const upperLimitTime = currentTime + PRELOAD_SEC;

@@ -25,7 +25,7 @@ function useGetVideoId() {
   }, []);
 
   //console.log(videoIdInfo);
-  return videoId;
+  return { videoId: videoId };
 }
 
 export default useGetVideoId;
