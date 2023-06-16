@@ -78,8 +78,6 @@ const MainFunctionCaller = () => {
     if (!audio) return;
 
     setAudioData(audio);
-
-    audio.play();
   }, [currentTranscript?.start]);
 
   return (
