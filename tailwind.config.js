@@ -67,6 +67,7 @@ module.exports = {
             inverted: '#000000', // black
           },
         },
+        'my-green': '#A0C49D',
       },
       boxShadow: {
         // light

@@ -151,7 +151,7 @@ const MainFunctionCaller = () => {
         <div className="grid gap-6 ">
           <div className="flex">
             <button
-              className={`items-center rounded-full bg-gray-500 hover:bg-gray-600 active:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 ml-auto mr-3 ${additionalClasses}`}
+              className={`items-center rounded-full bg-my-green dark:bg-gray-500 hover:bg-my-green dark:hover:bg-gray-600 active:bg-my-green dark:active:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 ml-auto mr-3 ${additionalClasses}`}
               onClick={openOptionsPage}
             >
               <p className="p-4">OPTION PAGE</p>
@@ -217,11 +217,12 @@ const MainFunctionCaller = () => {
               <Metric>{currentTranscript.text ? currentTranscript.text : '読み込み中...'}</Metric>
             </div>
             <div className="flex-shrink-0 mt-4">
-              <p>----------------------------------------</p>
+              <p>-----------------------------------------</p>
             </div>
           </div>
 
           <div className="log">
+            <p className="pb-2">統計情報</p>
             <p>VideoID：{video.videoId ? video.videoId : ''}</p>
             <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
             <p>現在時刻：{currentTime.toFixed(3)}</p>
@@ -230,21 +231,24 @@ const MainFunctionCaller = () => {
           </div>
 
           <div>
-            <p>字幕取得時間範囲</p>
+            <p className="pb-2">音声生成範囲</p>
             <div className="text-base">
               <p>
                 {getrangeTS.map((item, index) => (
                   <p key={index}>
-                    {item.start}：{item.text}
+                    <span className="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300 min-width-12">
+                      {item.start}
+                    </span>
+                    {item.text}
                   </p>
                 ))}
               </p>
-              <p>----------------------------------------</p>
+              <p>-----------------------------------</p>
             </div>
           </div>
 
           <div>
-            <h1>ALL字幕</h1>
+            <p>全字幕</p>
             <p>
               {transcript
                 ? transcript.map((item, index) => <p key={index}>{item.text}</p>)

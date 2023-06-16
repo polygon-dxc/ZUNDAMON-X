@@ -7,7 +7,7 @@ import AudioAnalyzerTest from './AudioAnalyzerTest';
 
 const Popup = (): ReactElement => {
   document.body.style.width = '18rem';
-  document.body.style.height = '15rem';
+  document.body.style.height = '10rem';
 
   return (
     <div className="h-screen items-center justify-center">
