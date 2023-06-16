@@ -4,70 +4,98 @@ import image1 from './../../public/images/zundamon_content0000.png';
 import image2 from './../../public/images/zundamon_content0001.png';
 
 type Props = {
-  file: File | null;
+  element: HTMLAudioElement | null;
 };
-const AudioAnalyzer: FC<Props> = ({ file }) => {
+const AudioAnalyzer: FC<Props> = ({ element }) => {
   const [number, setNumber] = useState(image1);
   useEffect(() => {
-    if (!file) return;
+    if (!element) return;
 
-    playFile();
-  }, [file]);
+    playElement();
+  }, [element]);
 
-  const playFile = () => {
-    if (!file) return;
+  const playElement = () => {
+    if (!element) return;
 
+    // Audio要素を取得
+
+    // AudioContextを作成
     const audioContext = new (window.AudioContext || window.AudioContext)();
-    const reader = new FileReader();
 
-    reader.onload = (e) => {
-      if (e.target) {
-        const arrayBuffer = e.target.result as ArrayBuffer;
+    // AnalyserNodeを作成
+    const analyser = audioContext.createAnalyser();
 
-        audioContext.decodeAudioData(arrayBuffer, (buffer) => {
-          const source = audioContext.createBufferSource();
-          source.buffer = buffer;
+    // Audio要素とAnalyserNodeを接続
+    const source = audioContext.createMediaElementSource(element);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
 
-          const analyser = audioContext.createAnalyser();
-          analyser.fftSize = 2048;
+    // 音声解析を開始
+    function analyzeAudio() {
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
 
-          source.connect(analyser);
-          analyser.connect(audioContext.destination);
-          source.onended = () => {
-            setNumber(image1);
-            source.stop();
-            source.disconnect();
-            clearInterval(interval);
-            audioContext.close();
-          };
-          const bufferLength = analyser.frequencyBinCount;
-          const dataArray = new Uint8Array(bufferLength);
+      // 解析結果を使用して何らかの処理を行う
+      // ここでは簡単に周波数スペクトルをコンソールに出力しています
+      console.log(dataArray);
+    }
 
-          source.start();
-          const interval = setInterval(() => {
-            analyser.getByteTimeDomainData(dataArray);
-            let sum = 0;
-            for (let i = 0; i < bufferLength; i++) {
-              const value = (dataArray[i] - 128) / 128;
-              sum += value * value;
-            }
-            const rms = Math.sqrt(sum / bufferLength);
-            if (rms >= 0.001) {
-              setNumber(image2);
-            } else {
-              setNumber(image1);
-            }
-          }, 500);
-        });
-      }
-    };
+    // 音声が再生されるたびに解析を行う
+    element.addEventListener('play', () => {
+      setInterval(analyzeAudio, 100); // 一定間隔で解析するために定期的に呼び出す
+    });
 
-    reader.readAsArrayBuffer(file);
+    // const audioContext = new (window.AudioContext || window.AudioContext)();
+    // const reader = new FileReader();
+
+    // reader.onload = (e) => {
+    //   if (e.target) {
+    //     const arrayBuffer = e.target.result as ArrayBuffer;
+
+    //     audioContext.decodeAudioData(arrayBuffer, (buffer) => {
+    //       const source = audioContext.createBufferSource();
+    //       source.buffer = buffer;
+
+    //       const analyser = audioContext.createAnalyser();
+    //       analyser.fftSize = 2048;
+
+    //       source.connect(analyser);
+    //       analyser.connect(audioContext.destination);
+    //       source.onended = () => {
+    //         setNumber(image1);
+    //         source.stop();
+    //         source.disconnect();
+    //         clearInterval(interval);
+    //         audioContext.close();
+    //       };
+    //       const bufferLength = analyser.frequencyBinCount;
+    //       const dataArray = new Uint8Array(bufferLength);
+
+    //       source.start();
+    //       const interval = setInterval(() => {
+    //         analyser.getByteTimeDomainData(dataArray);
+    //         let sum = 0;
+    //         for (let i = 0; i < bufferLength; i++) {
+    //           const value = (dataArray[i] - 128) / 128;
+    //           sum += value * value;
+    //         }
+    //         const rms = Math.sqrt(sum / bufferLength);
+    //         if (rms >= 0.001) {
+    //           setNumber(image2);
+    //         } else {
+    //           setNumber(image1);
+    //         }
+    //       }, 500);
+    //     });
+    //   }
   };
+
+  // reader.readAsArrayBuffer(file);
 
   return (
     <div>
-      <button onClick={playFile}>play</button>
+      {/* <button onClick={playFile}>play</button> */}
       <div style={{ width: '200px', height: '400px', zIndex: 9999 }}>
         <div
           style={{
