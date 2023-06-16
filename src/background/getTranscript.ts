@@ -3,33 +3,59 @@ import axios from 'axios';
 
 import { videoidtype } from '../types';
 
-async function getTranscript({ videoId }: videoidtype) {
-  //字幕APIアクセスURL
-  //http://127.0.0.1:8000/transcript/?id=wdvclbIHfHk
+export const getTranscript = () =>
+  chrome.runtime.onMessage.addListener(async (request) => {
+    console.log('メッセージを受け取りまあああ', request);
+    // 期待通りのリクエストかどうかをチェック
+    if (request.name === 'getTranscript') {
+      // async function getTranscript({ videoId }: videoidtype) {
 
-  try {
-    const response = await axios.get(`http://0.0.0.0:8000/transcript?videoId=` + videoId, {
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      withCredentials: true,
-    });
+      // const response = await axios.get(`http://0.0.0.0:8000/transcript?videoId=` + videoId, {
+      //   headers: { 'Access-Control-Allow-Origin': '*' },
+      //   withCredentials: true,
+      // });
 
-    /*
-    //GCPアクセス字幕API.ver3
-    const response = await axios.get(
-      `https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy?videoId=` + videoId,
-      {
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        withCredentials: true,
-      }
-    );
-    */
+      //GCPアクセス字幕API.ver3
+      await fetch(
+        `https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy?videoId=` +
+          request.videoId,
+        {
+          method: 'GET',
+          headers: { 'Access-Control-Allow-Origin': '*' },
+          // withCredentials: true,
+        }
+      )
+        .then((json) => {
+          return json.json();
+        })
+        .then((res) => {
+          const transcript = res;
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            console.log({ tabs });
+            const id = tabs[0].id as number;
 
-    // The data property of the response will contain the transcript
-    const transcript = response.data;
-    return transcript;
-  } catch (error) {
-    console.error(error);
-  }
-}
+            // content_script へデータを送る
+            chrome.tabs
+              .sendMessage(id, {
+                // content_script はタブごとに存在するため ID 指定する必要がある
+                name: 'returnTranscript',
+                data: {
+                  transcript,
+                },
+              })
+              .then((res) => {
+                console.log('メッセージを送りまああ', res);
+              })
+              .catch((err) => {
+                console.log('Error:', err);
+              });
+          });
+        });
 
-export default getTranscript;
+      // The data property of the response will contain the transcript
+
+      // }
+    }
+  });
+
+// export default getTranscript;
