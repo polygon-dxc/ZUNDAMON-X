@@ -52,14 +52,7 @@ const MainFunctionCaller = () => {
     if (video.videoId !== '') {
       //字幕データを取得
       console.log('メッセージを送信します！');
-      chrome.runtime
-        .sendMessage({ name: 'getTranscript', videoId: `${video.videoId}` })
-        .then((res) => {
-          console.log('メッセージを送信しました！', res);
-        })
-        .catch((err) => {
-          console.log('Error:', err);
-        });
+      chrome.runtime.sendMessage({ name: 'getTranscript', videoId: `${video.videoId}` });
       // getTranscript(video).then((result) => {
       //   setTranscript(result);
       // });

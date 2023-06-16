@@ -18,6 +18,7 @@ const Content = (): ReactElement => {
   const handleClick = () => {
     getAudioData('こんにちは', 1); // useAudioDataフックを呼び出す
   };
+
   return (
     <div
       style={{
