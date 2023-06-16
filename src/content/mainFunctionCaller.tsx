@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { getTranscriptResponseType, videoidtype } from '../types';
-import getTranscript from '../background/getTranscript';
-import useGetVideoId from '../background/useGetVideoId';
-import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
-import AudioAnalyzer from '../popup/AudioAnalyzer';
-import { audioDataState } from '../atom';
-import { useRecoilValue } from 'recoil';
-import useAudioData from '../background/useAudioData';
 import { Card, Metric } from '@tremor/react';
+import { useRecoilValue } from 'recoil';
+
+import { audioDataState } from '../atom';
+import getTranscript from '../background/getTranscript';
+import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
+import useAudioData from '../background/useAudioData';
+import useGetVideoId from '../background/useGetVideoId';
+import AudioAnalyzer from '../popup/AudioAnalyzer';
+import { getTranscriptResponseType, videoidtype } from '../types';
 
 //Youtube再生画面を開いたら実行されます
 
@@ -23,8 +24,7 @@ const MainFunctionCaller = () => {
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
 
   const [TSdisplay, setTSdisplay] = useState<getTranscriptResponseType[]>([]);
-  const { audioData, getAudio } = useAudioData();
-
+  // const { audioData, getAudio } = useAudioData();
 
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
   const [wishList, setWishList] = useState<number[]>([]);
@@ -96,9 +96,7 @@ const MainFunctionCaller = () => {
         )
         .filter((index) => index !== -1);
 
-
       setWishList(tmpWishlist); //ほしい物リストの更新
-
     }
 
     // 現在時間から-5分の音声データを削除する
@@ -113,13 +111,12 @@ const MainFunctionCaller = () => {
     */
   }, [currentTime]);
 
-
   //音声データの新規生成と削除------------------------------------------
   useEffect(() => {
     console.log('ほしい物リスト', wishList);
 
     let tmpCreatedList = [...createdAudioIndex];
-    let tmpTSdisplay: getTranscriptResponseType[] = [];
+    const tmpTSdisplay: getTranscriptResponseType[] = [];
 
     wishList.forEach((item) => {
       const findText = transcript[item];
@@ -130,7 +127,7 @@ const MainFunctionCaller = () => {
           // let _createdAudioIndex = [...createdAudioIndex];
           // _createdAudioIndex.push(findText.start);
           setCreatedAudioIndex((createdAudioIndex) => {
-            let _createdAudioIndex = [...createdAudioIndex];
+            const _createdAudioIndex = [...createdAudioIndex];
 
             _createdAudioIndex.push(findText.start);
             return _createdAudioIndex;
@@ -143,7 +140,7 @@ const MainFunctionCaller = () => {
       return;
     });
     console.log('消す', tmpCreatedList);
-    //消す　(tmpCreatedList])
+    //消す(tmpCreatedList])
     setCreatedAudioIndex((_) => {
       let _createdAudioIndex = [..._];
       _createdAudioIndex = _createdAudioIndex.filter((_) => !tmpCreatedList.includes(_));
@@ -190,7 +187,7 @@ const MainFunctionCaller = () => {
           <p>
             {TSdisplay
               ? TSdisplay.map((item) => (
-                  <p>
+                  <p key={item.start}>
                     {item.start}：{item.text}
                   </p>
                 ))
