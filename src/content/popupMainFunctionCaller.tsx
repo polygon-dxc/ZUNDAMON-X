@@ -167,7 +167,7 @@ const MainFunctionCaller = () => {
   }, [wishList[0]]);
 
   //音声の再生------------------------------------------
-  const currentAudio = useAudioData();
+  // const currentAudio = useAudioData();
   //今の時間に対応したstartがセットされた時に実行
 
   /* 今の保持しているstartに対応した音声データをstateから取得 */
@@ -297,7 +297,7 @@ const MainFunctionCaller = () => {
           <div>
             <input type="file" onChange={handleFileChange} />
             <div>
-              {audioData ? <AudioAnalyzer file={audioData[1]} /> : <p>No audio file selected</p>}
+              {audioData ? <AudioAnalyzer element={audioData[1]} /> : <p>No audio file selected</p>}
             </div>
           </div>
         </div>
