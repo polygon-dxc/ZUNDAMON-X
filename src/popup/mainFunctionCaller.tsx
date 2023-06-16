@@ -3,10 +3,11 @@ import { set } from 'lodash';
 import { getTranscriptResponseType, videoidtype } from '../types';
 import { Card, Metric } from '@tremor/react';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
-import useAudioData from '../content/useAudioData';
+
 import useGetVideoId from './background/useGetVideoId';
 import { getPlaybackStatus, getVideoCurrentTime } from './background/getVideoCurrentTime';
 import getTranscript from './background/getTranscript';
+import useAudioData from './background/useAudioData';
 //used in tailwind css
 let additionalClasses = 'focus:ring-2 focus:ring-purple-600';
 const openOptionsPage = () => {

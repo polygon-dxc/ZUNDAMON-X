@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { audioDataObject } from '../types';
+import { audioDataObject } from '../../types';
 
 const useAudioData = () => {
   const [audioData, setAudioData] = useState<audioDataObject>({});
