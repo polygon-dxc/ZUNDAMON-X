@@ -3,48 +3,59 @@ import axios from 'axios';
 
 import { videoidtype } from '../types';
 
-async function getTranscript({ videoId }: videoidtype) {
-  //字幕APIアクセスURL
-  //http://127.0.0.1:8000/transcript/?id=wdvclbIHfHk
+export const getTranscript = () =>
+  chrome.runtime.onMessage.addListener(async (request) => {
+    console.log('メッセージを受け取りまあああ', request);
+    // 期待通りのリクエストかどうかをチェック
+    if (request.name === 'getTranscript') {
+      // async function getTranscript({ videoId }: videoidtype) {
 
-  /*
-  //GCPアクセス字幕API
-  const response = await axios.get(`http://35.189.143.254/transcript`, {
-    params: {
-      videoId: videoId,
-    },
+      // const response = await axios.get(`http://0.0.0.0:8000/transcript?videoId=` + videoId, {
+      //   headers: { 'Access-Control-Allow-Origin': '*' },
+      //   withCredentials: true,
+      // });
 
-  //GCPアクセス字幕API.ver2
-  const response = await axios.get(`https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy`, {
-    params: {
-      videoId: videoId,
-    },
-  
-  //通常アクセス字幕API
-  //https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy/transcript?videoId=ZRtdQ81jPUQ
+      //GCPアクセス字幕API.ver3
+      await fetch(
+        `https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy?videoId=` +
+          request.videoId,
+        {
+          method: 'GET',
+          headers: { 'Access-Control-Allow-Origin': '*' },
+          // withCredentials: true,
+        }
+      )
+        .then((json) => {
+          return json.json();
+        })
+        .then((res) => {
+          const transcript = res;
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            console.log({ tabs });
+            const id = tabs[0].id as number;
 
-  //ローカルアクセス字幕API
-  const response = await axios.get(`http://127.0.0.1:8000/transcript/`, {
-      params: {
-        id: videoId,
-      },
-  */
+            // content_script へデータを送る
+            chrome.tabs
+              .sendMessage(id, {
+                // content_script はタブごとに存在するため ID 指定する必要がある
+                name: 'returnTranscript',
+                data: {
+                  transcript,
+                },
+              })
+              .then((res) => {
+                console.log('メッセージを送りまああ', res);
+              })
+              .catch((err) => {
+                console.log('Error:', err);
+              });
+          });
+        });
 
-  try {
-    const response = await axios.get(
-      `https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy?videoId=` + videoId,
-      {
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        withCredentials: true,
-      }
-    );
+      // The data property of the response will contain the transcript
 
-    // The data property of the response will contain the transcript
-    const transcript = response.data;
-    return transcript;
-  } catch (error) {
-    console.error(error);
-  }
-}
+      // }
+    }
+  });
 
-export default getTranscript;
+// export default getTranscript;

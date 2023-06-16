@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { set } from 'lodash';
-import getTranscript from '../background/getTranscript';
-import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
-import useGetVideoId from '../background/useGetVideoId';
-import { getTranscriptResponseType, videoidtype } from '../types';
+import React, { FC, useEffect, useState } from 'react';
 import { Card, Metric } from '@tremor/react';
-import useAudioData from './useAudioData';
+import { useRecoilValue } from 'recoil';
+
+import { audioDataState } from '../atom';
+import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
+import useAudioData from '../background/useAudioData';
+import useGetVideoId from '../background/useGetVideoId';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
 import './main.css';
 import '../tailwind.css';
-//Youtube再生画面を開いたら実行されます
+import { getTranscriptResponseType, videoidtype } from '../types';
 
 //use in tailwind css
 let additionalClasses = 'focus:ring-2 focus:ring-purple-600';
@@ -27,10 +27,15 @@ const MainFunctionCaller = () => {
     duration: 0,
   });
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
-  const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
-  const { audioData, getAudio } = useAudioData();
+
+  const [TSdisplay, setTSdisplay] = useState<getTranscriptResponseType[]>([]);
+  // const { audioData, getAudio } = useAudioData();
+
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
+  const [wishList, setWishList] = useState<number[]>([]);
   const getAudioTime = 1000; //音声データの取得間隔
+  const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
+  const audioData = useRecoilValue(audioDataState);
 
   //use in tailwind css
   const [isChecked, setIsChecked] = useState(true); //toggle1
@@ -46,28 +51,45 @@ const MainFunctionCaller = () => {
     //contentにアクセスする度に最初に実行
     if (video.videoId !== '') {
       //字幕データを取得
-      getTranscript(video).then((result) => {
-        setTranscript(result);
-      });
+      console.log('メッセージを送信します！');
+      chrome.runtime
+        .sendMessage({ name: 'getTranscript', videoId: `${video.videoId}` })
+        .then((res) => {
+          console.log('メッセージを送信しました！', res);
+        })
+        .catch((err) => {
+          console.log('Error:', err);
+        });
+      // getTranscript(video).then((result) => {
+      //   setTranscript(result);
+      // });
+      chrome.runtime.onMessage.addListener((request) => {
+        if (request.name === 'returnTranscript') {
+          console.log('メッセージを受け取りました！', request);
 
+          setTranscript(request.data.transcript);
+        }
+      });
       const unsubscribe = setInterval(() => {
         //contentアクセス後、毎秒実行
         //現在の再生時刻を取得
-        getVideoCurrentTime().then((result) => {
-          if (typeof result === 'number') {
-            setCurrentTime(result);
-          } else {
-            console.log('再生時刻取得error');
-          }
-          //現在の再生状態を取得
-          getPlaybackStatus().then((result) => {
-            if (typeof result === 'boolean') {
-              setPlaybackStatus(result);
-            } else {
-              console.log('再生状態取得error');
-            }
-          });
-        });
+        const currentTimeResult = getVideoCurrentTime();
+        // .then((result) => {
+        if (typeof currentTimeResult === 'number') {
+          setCurrentTime(currentTimeResult);
+        } else {
+          console.log('再生時刻取得error');
+        }
+        //現在の再生状態を取得
+        const playBackResult = getPlaybackStatus();
+        // .then((result) => {
+        if (typeof playBackResult === 'boolean') {
+          setPlaybackStatus(playBackResult);
+        } else {
+          console.log('再生状態取得error');
+        }
+        // });
+        // });
       }, getAudioTime);
       return () => {
         //タイマーを消す
@@ -89,58 +111,84 @@ const MainFunctionCaller = () => {
       }
 
       //--音声の事前生成処理------------------------------------------------------
-      //音声生成範囲の閾値
 
-      const upperLimitTime = currentTime + 30;
+      //ほしい物リストの範囲
+      const upperLimitTime = currentTime + 20;
       const lowerLimitTime = currentTime - 15;
-      const timeRangeIndices = transcript
+      //ほしい物リストの検索
+      const tmpWishlist = transcript
         .map((item, index) =>
           item.start >= lowerLimitTime && item.start <= upperLimitTime ? index : -1
         )
         .filter((index) => index !== -1);
-      const rangeData: getTranscriptResponseType[] = timeRangeIndices.map((item) => {
-        //重複生成を防ぐ分岐１
-        // if (transcript[item].start in audioData) {
-        //   // console.log("getAudio処理完了済");
-        //   console.log(audioData)
-        // } else {
-        //重複生成を防ぐ分岐２
-        if (!createdAudioIndex.includes(transcript[item].start)) {
-          //音声データ1回目の生成
-          setCreatedAudioIndex((prevCreatedAudioIndex) => [
-            ...prevCreatedAudioIndex,
-            transcript[item].start,
-          ]); //生成済みstartを記録
-          console.log(transcript[item].text); //console.log('音声データ生成');
 
-          //getAudio(transcript[item].text, transcript[item].start);
-        } else {
-          //console.log('スルー');
-        }
-        //}
-        return {
-          text: transcript[item].text,
-          start: transcript[item].start,
-          duration: transcript[item].duration,
-        };
-      });
-      setGetrangeTS(rangeData); //range内のTranscriptをセット
-    } else {
-      console.log('字幕情報が取得できません');
+      setWishList(tmpWishlist); //ほしい物リストの更新
     }
+
+    // 現在時間から-5分の音声データを削除する
+    /*
+    const fiveMinutesAgo = currentTime - 300;
+    const updatedAudioData = { ...audioData };
+    Object.keys(updatedAudioData).forEach((start) => {
+      if (Number(start) <= fiveMinutesAgo) {
+        delete updatedAudioData[start];
+      }
+    });
+    */
   }, [currentTime]);
+
+  //音声データの新規生成と削除------------------------------------------
+  useEffect(() => {
+    console.log('ほしい物リスト', wishList);
+
+    let tmpCreatedList = [...createdAudioIndex];
+    const tmpTSdisplay: getTranscriptResponseType[] = [];
+
+    wishList.forEach((item) => {
+      const findText = transcript[item];
+
+      if (findText) {
+        if (!createdAudioIndex.find((_) => _ == findText.start)) {
+          console.log('作る', findText.text);
+          // let _createdAudioIndex = [...createdAudioIndex];
+          // _createdAudioIndex.push(findText.start);
+          setCreatedAudioIndex((createdAudioIndex) => {
+            const _createdAudioIndex = [...createdAudioIndex];
+
+            _createdAudioIndex.push(findText.start);
+            return _createdAudioIndex;
+          });
+        } else {
+          tmpCreatedList = tmpCreatedList.filter((_) => _ !== findText.start);
+        }
+        tmpTSdisplay.push(findText);
+      }
+      return;
+    });
+    console.log('消す', tmpCreatedList);
+    //消す(tmpCreatedList])
+    setCreatedAudioIndex((_) => {
+      let _createdAudioIndex = [..._];
+      _createdAudioIndex = _createdAudioIndex.filter((_) => !tmpCreatedList.includes(_));
+      return _createdAudioIndex;
+    }); //作成済みの音声データの更新
+    setTSdisplay(tmpTSdisplay); //読み込み予定の字幕を更新
+  }, [wishList[0]]);
 
   //音声の再生------------------------------------------
   const currentAudio = useAudioData();
   //今の時間に対応したstartがセットされた時に実行
+
+  /* 今の保持しているstartに対応した音声データをstateから取得 */
+
   useEffect(() => {
-    //startと一致するwavファイルをオブジェクトから取得
-    const audioData = currentAudio.audioData[`${currentTranscript.start}`];
-    setCurrentAudioFile(audioData); //wavファイルをセット
+    const currentAudioData = audioData[`${currentTranscript.start}`]; //startに対応したwavファイルを取得
+    setCurrentAudioFile(currentAudioData); //wavファイルをセット
 
     //console.log('startTimeが変更されました:', currentTranscript.start);
   }, [currentTranscript.start]);
 
+  // テスト用
   const handleFileChange = (e: any) => {
     setCurrentAudioFile(e.target.files[0]);
   };

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 
-import image1 from './../../public/images/zundamon_0001.png';
-import image2 from './../../public/images/zundamon_0002.png';
+import image1 from './../../public/images/zundamon_content0000.png';
+import image2 from './../../public/images/zundamon_content0001.png';
 
 type Props = {
   file: File | null;
