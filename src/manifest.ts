@@ -3,6 +3,7 @@ import { ManifestV3Export } from '@crxjs/vite-plugin';
 const manifest: ManifestV3Export = {
   manifest_version: 3,
   name: 'ZUNDAMON-X',
+
   description: 'Listen to English videos on YouTube in Japanese',
   version: '0.2',
   content_scripts: [
@@ -11,7 +12,7 @@ const manifest: ManifestV3Export = {
       js: ['src/content/index.tsx'],
     },
   ],
-  permissions: ['storage', 'tabs', 'activeTab', 'scripting'],
+  permissions: ['storage', 'tabs', 'activeTab', 'scripting', 'sidePanel'],
   background: {
     service_worker: 'src/background/index.ts',
   },

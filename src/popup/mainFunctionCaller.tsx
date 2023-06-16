@@ -10,6 +10,7 @@ import getTranscript from './background/getTranscript';
 import useAudioData from './background/useAudioData';
 //used in tailwind css
 let additionalClasses = 'focus:ring-2 focus:ring-purple-600';
+let customBorderLineClasses = 'border-b border-black dark:border-white';
 const openOptionsPage = () => {
   chrome.runtime.openOptionsPage(); //Chrome拡張のオプションページに遷移
 };
@@ -90,7 +91,7 @@ const MainFunctionCaller = () => {
       //音声生成範囲の閾値
 
       const upperLimitTime = currentTime + 30;
-      const lowerLimitTime = currentTime - 15;
+      const lowerLimitTime = currentTime - 10;
       const timeRangeIndices = transcript
         .map((item, index) =>
           item.start >= lowerLimitTime && item.start <= upperLimitTime ? index : -1
@@ -144,15 +145,16 @@ const MainFunctionCaller = () => {
   };
 
   return (
-    <div className="text-black dark:text-white">
+    <div className="text-black dark:text-white bg-gradient-to-l md:bg-gradient-to-r">
+      <div className="flex"></div>
       <Card className="bg-gradient-to-l md:bg-gradient-to-r">
-        <div className="grid gap-6 ">
+        <div className="grid gap-4">
           <div className="flex">
             <button
-              className={`items-center rounded-full bg-my-green dark:bg-gray-500 hover:bg-my-green dark:hover:bg-gray-600 active:bg-my-green dark:active:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 ml-auto mr-3 ${additionalClasses}`}
+              className={`items-center rounded-full bg-my-green hover:bg-my-green active:bg-my-green focus:outline-none focus:ring focus:ring-gray-300 ml-auto ${additionalClasses}`}
               onClick={openOptionsPage}
             >
-              <p className="p-4">OPTION PAGE</p>
+              <p className="p-4 text-black">OPTION PAGE</p>
             </button>
           </div>
 
@@ -165,7 +167,7 @@ const MainFunctionCaller = () => {
                 checked={isChecked}
                 onChange={() => setIsChecked(!isChecked)}
               />
-              <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+              <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-my-green"></div>
               <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                 読み上げ機能
               </span>
@@ -181,9 +183,9 @@ const MainFunctionCaller = () => {
                 checked={isChecked2}
                 onChange={() => setIsChecked2(!isChecked2)}
               />
-              <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+              <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-my-green"></div>
               <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300 ">
-                ずんだもんビジュ
+                ずんだもん表示／非表示
               </span>
             </label>
           </div>
@@ -211,25 +213,18 @@ const MainFunctionCaller = () => {
           </div>
 
           <div className="flex flex-col items-start">
-            <div className="overflow-auto h-52 w-64">
+            <div className="overflow-auto h-52">
               <Metric>{currentTranscript.text ? currentTranscript.text : '読み込み中...'}</Metric>
             </div>
-            <div className="flex-shrink-0 mt-4">
-              <p>-----------------------------------------</p>
-            </div>
+            <div className="flex-shrink-0 mt-4"></div>
           </div>
 
-          <div className="log">
-            <p className="pb-2">統計情報</p>
-            <p>VideoID：{video.videoId ? video.videoId : ''}</p>
-            <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
-            <p>現在時刻：{currentTime.toFixed(3)}</p>
-            <p>現在時刻+20：{(currentTime + 20).toFixed(3)}</p>
-            <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
-          </div>
+          <div className={customBorderLineClasses}></div>
 
           <div>
-            <p className="pb-2">音声生成範囲</p>
+            <p className="pb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              音声生成中...
+            </p>
             <div className="text-base">
               <p>
                 {getrangeTS.map((item, index) => (
@@ -241,23 +236,26 @@ const MainFunctionCaller = () => {
                   </p>
                 ))}
               </p>
-              <p>-----------------------------------</p>
             </div>
           </div>
+          <div className={customBorderLineClasses}></div>
 
+          <div className="log">
+            <p className="pb-2 text-sm font-medium text-gray-900 dark:text-gray-300">統計情報</p>
+            <p>VideoID：{video.videoId ? video.videoId : ''}</p>
+            <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
+            <p>現在時刻：{currentTime.toFixed(3)}</p>
+            <p>現在時刻+20：{(currentTime + 20).toFixed(3)}</p>
+            <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
+          </div>
+          <div className={customBorderLineClasses}></div>
           <div>
-            <p>全字幕</p>
+            <p className="pb-3 text-sm font-medium text-gray-900 dark:text-gray-300">全字幕</p>
             <p>
               {transcript
                 ? transcript.map((item, index) => <p key={index}>{item.text}</p>)
                 : '動画を取得できませんでした。'}
             </p>
-          </div>
-          <div>
-            <input type="file" onChange={handleFileChange} />
-            <div>
-              {audioData ? <AudioAnalyzer file={audioData[1]} /> : <p>No audio file selected</p>}
-            </div>
           </div>
         </div>
       </Card>
