@@ -4,20 +4,13 @@ import AudioAnalyzer from '../popup/AudioAnalyzer';
 
 import { Counter } from './features/counter';
 // import getAudioData from './getAudioData';
-import useAudioData from '../background/useAudioData';
 import { audioDataState } from '../atom';
 import { useRecoilValue } from 'recoil';
 import MainFunctionCaller from './mainFunctionCaller';
 
 const Content = (): ReactElement => {
   // const { audioData, getAudio } = useAudioData();
-  const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
   const audioData = useRecoilValue(audioDataState);
-
-  /* 動作確認用 */
-  const handleClick = () => {
-    getAudioData('こんにちは', 1); // useAudioDataフックを呼び出す
-  };
 
   return (
     <div
@@ -33,8 +26,7 @@ const Content = (): ReactElement => {
       <MainFunctionCaller />
       <div style={{ display: 'flex', justifyContent: 'center' }}>Content Example</div>
       <Counter />
-      <button onClick={handleClick}>audio get button</button>
-      <div>{audioData ? <AudioAnalyzer file={audioData[1]} /> : <p>No audio file selected</p>}</div>
+      <div>{audioData ? <AudioAnalyzer element={audioData} /> : <p>No audio file selected</p>}</div>
     </div>
   );
 };

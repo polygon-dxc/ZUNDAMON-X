@@ -3,6 +3,8 @@ import { useGetVideoStatus } from './useGetVideoStatus';
 import useGetVideoId from '../background/useGetVideoId';
 import { useGetTranscript } from './useGetTranscript';
 import { getTranscriptResponseType } from '../types';
+import { useRecoilState } from 'recoil';
+import { audioDataState } from '../atom';
 
 // 何秒前から音声データを取得するか
 const PRELOAD_SEC = 60;
@@ -13,6 +15,7 @@ const MainFunctionCaller = () => {
   const videoId = useGetVideoId();
   const transcript = useGetTranscript(videoId.videoId);
   const [createdAudioIndexArray, setCreatedAudioIndexArray] = useState<number[]>([]);
+  const [audioData, setAudioData] = useRecoilState(audioDataState);
 
   const [currentTranscript, setCurrentTranscript] = useState<getTranscriptResponseType>();
   useEffect(() => {
@@ -73,6 +76,8 @@ const MainFunctionCaller = () => {
     const audio = audios[currentTranscript.text];
     console.log(audio);
     if (!audio) return;
+
+    setAudioData(audio);
 
     audio.play();
   }, [currentTranscript?.start]);

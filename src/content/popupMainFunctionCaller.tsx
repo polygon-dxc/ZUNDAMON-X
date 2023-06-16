@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 
 import { audioDataState } from '../atom';
 import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
-import useAudioData from '../background/useAudioData';
 import useGetVideoId from '../background/useGetVideoId';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
 import './main.css';
@@ -34,7 +33,6 @@ const MainFunctionCaller = () => {
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
   const [wishList, setWishList] = useState<number[]>([]);
   const getAudioTime = 1000; //音声データの取得間隔
-  const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
   const audioData = useRecoilValue(audioDataState);
 
   //use in tailwind css

@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
 // 音声データの型
-export const audioDataState = atom<Record<string, File>>({
+export const audioDataState = atom<HTMLAudioElement | null>({
   key: 'audioDataState',
-  default: {}, // { [start]: File }
+  default: null, // { [start]: File }
 });
