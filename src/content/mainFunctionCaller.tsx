@@ -1,7 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-
-import { audioDataState } from '../atom';
 import { useGetVideoStatus } from './useGetVideoStatus';
 import useGetVideoId from '../background/useGetVideoId';
 import { useGetTranscript } from './useGetTranscript';
@@ -66,6 +63,7 @@ const MainFunctionCaller = () => {
           console.log('audio loaded', targetTranscript.text);
         };
         setAudios((audios) => ({ ...audios, [targetTranscript.text]: audio }));
+        setCreatedAudioIndexArray((createdAudioIndexArray) => [...createdAudioIndexArray, index]);
       });
   }, [wishList]);
 
