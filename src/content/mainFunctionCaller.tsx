@@ -5,23 +5,31 @@ import { audioDataState } from '../atom';
 import { useGetVideoStatus } from './useGetVideoStatus';
 import useGetVideoId from '../background/useGetVideoId';
 import { useGetTranscript } from './useGetTranscript';
-import { getAudio } from './getAudio';
+import { getTranscriptResponseType } from '../types';
 
 // 何秒前から音声データを取得するか
-const PRELOAD_SEC = 10;
+const PRELOAD_SEC = 60;
 
 const MainFunctionCaller = () => {
   const [wishList, setWishList] = useState<number[]>([]);
-  const [allAudioData, setAllAudioData] = useRecoilState(audioDataState);
   const { currentTime } = useGetVideoStatus();
   const videoId = useGetVideoId();
   const transcript = useGetTranscript(videoId.videoId);
   const [createdAudioIndexArray, setCreatedAudioIndexArray] = useState<number[]>([]);
 
-  const currentTranscript = transcript.find(
-    (item) => currentTime && item.start <= currentTime && item.start + item.duration >= currentTime
-  );
-  const currentAudioFile = currentTranscript && allAudioData[currentTranscript.start];
+  const [currentTranscript, setCurrentTranscript] = useState<getTranscriptResponseType>();
+  useEffect(() => {
+    const val = transcript.findIndex(
+      (item) =>
+        currentTime && item.start <= currentTime && item.start + item.duration >= currentTime
+    );
+
+    if (val != -1) setCurrentTranscript(transcript[val + 1]);
+  }, [currentTime]);
+
+  console.log(currentTranscript);
+
+  const [audios, setAudios] = useState<{ [key in string]: HTMLAudioElement }>({});
 
   //currentTimeが変更する度に実行
   useEffect(() => {
@@ -38,19 +46,6 @@ const MainFunctionCaller = () => {
       .filter((index) => index !== -1);
 
     setWishList(tmpWishlist); //ほしい物リストの更新
-
-    // 現在時間から-5分の音声データを削除する
-    const fiveMinutesAgo = currentTime - 300;
-    const updatedAudioData = { ...allAudioData };
-    Object.keys(updatedAudioData).forEach((start) => {
-      if (Number(start) <= fiveMinutesAgo) {
-        delete updatedAudioData[start];
-      }
-    });
-    setAllAudioData(updatedAudioData);
-    setCreatedAudioIndexArray((indexArray) =>
-      indexArray.filter((index) => !Object.keys(updatedAudioData).includes(index.toString()))
-    );
   }, [currentTime]);
 
   // 指定された音声を事前に生成
@@ -60,32 +55,35 @@ const MainFunctionCaller = () => {
       .forEach((index) => {
         const targetTranscript = transcript[index];
         if (!targetTranscript) return;
+        if (audios[targetTranscript.text]) return;
 
-        setCreatedAudioIndexArray((createdAudioIndexArray) => [...createdAudioIndexArray, index]);
-        getAudio(targetTranscript.text).then((audioData) => {
-          setAllAudioData((allAudioData) => ({
-            ...allAudioData,
-            [targetTranscript.start]: audioData,
-          }));
-        });
+        console.log('create audio', targetTranscript.text);
+        const audio = new Audio();
+        audio.src =
+          'https://asia-northeast1-zundamon-x.cloudfunctions.net/zundamon-api-proxy/voice?message=' +
+          targetTranscript.text;
+        audio.onload = () => {
+          console.log('audio loaded', targetTranscript.text);
+        };
+        setAudios((audios) => ({ ...audios, [targetTranscript.text]: audio }));
       });
   }, [wishList]);
 
-  // 音声を再生
   useEffect(() => {
-    if (!currentAudioFile) return;
+    if (!currentTranscript) return;
 
-    const url = URL.createObjectURL(currentAudioFile);
-    const audio = new Audio(url);
-    audio.onload = () => {
-      audio.play();
-    };
-  }, [currentAudioFile]);
+    const audio = audios[currentTranscript.text];
+    console.log(audio);
+    if (!audio) return;
+
+    audio.play();
+  }, [currentTranscript?.start]);
 
   return (
     <div style={{ backgroundColor: 'white' }}>
       <p>current time : {currentTime}</p>
       <p>current transcript : {currentTranscript?.text}</p>
+      <p>current transcript start: {currentTranscript?.start}</p>
     </div>
   );
 };
