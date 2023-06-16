@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 
-import MainFunctionCaller from '../content/mainFunctionCaller';
+import MainFunctionCaller from '../content/popupMainFunctionCaller';
 
 import AudioAnalyzer from './AudioAnalyzer';
 import AudioAnalyzerTest from './AudioAnalyzerTest';
