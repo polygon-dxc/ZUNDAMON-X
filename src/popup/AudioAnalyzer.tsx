@@ -12,7 +12,7 @@ const AudioAnalyzer: FC<Props> = ({ element }) => {
     if (!element) return;
 
     playElement();
-  }, [element]);
+  }, [element?.src]);
 
   const playElement = () => {
     if (!element) return;
@@ -40,7 +40,7 @@ const AudioAnalyzer: FC<Props> = ({ element }) => {
       // ここでは簡単に周波数スペクトルをコンソールに出力しています
       console.log(dataArray);
     }
-
+    element.play();
     // 音声が再生されるたびに解析を行う
     element.addEventListener('play', () => {
       setInterval(analyzeAudio, 100); // 一定間隔で解析するために定期的に呼び出す
