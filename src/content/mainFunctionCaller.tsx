@@ -7,15 +7,22 @@ import { getTranscriptResponseType, videoidtype } from '../types';
 import { Card, Metric } from '@tremor/react';
 import useAudioData from './useAudioData';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
-
+import './main.css';
+import '../tailwind.css';
 //Youtube再生画面を開いたら実行されます
+
+//use in tailwind css
+let additionalClasses = 'focus:ring-2 focus:ring-purple-600';
+const openOptionsPage = () => {
+  chrome.runtime.openOptionsPage(); //Chrome拡張のオプションページに遷移
+};
 
 const MainFunctionCaller = () => {
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [playbackStatus, setPlaybackStatus] = useState<boolean>(false);
   const [transcript, setTranscript] = useState<getTranscriptResponseType[]>([]);
   const [currentTranscript, setCurrentTranscript] = useState<getTranscriptResponseType>({
-    text: '再生開始！',
+    text: '',
     start: 0,
     duration: 0,
   });
@@ -23,8 +30,12 @@ const MainFunctionCaller = () => {
   const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
   const { audioData, getAudio } = useAudioData();
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
-
   const getAudioTime = 1000; //音声データの取得間隔
+
+  //use in tailwind css
+  const [isChecked, setIsChecked] = useState(true); //toggle1
+  const [isChecked2, setIsChecked2] = useState(true); //toggle2
+  const [isOpen, setIsOpen] = useState(false); //ログの表示
 
   //VideoIDを取得
   //videoIdのオブジェクト生成
@@ -135,41 +146,167 @@ const MainFunctionCaller = () => {
   };
 
   return (
-    <div style={{ color: 'white' }}>
-      <Card>
-        <p>Count：</p>
-        <p>VideoID：{video.videoId ? video.videoId : ''}</p>
-        <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
-        <p>現在時刻：{currentTime.toFixed(3)}</p>
-        <p>現在時刻+20：{(currentTime + 20).toFixed(3)}</p>
-        <p>字幕取得時間範囲</p>
-        <div className="text-base ">
-          <p>
-            {getrangeTS.map((item, index) => (
-              <p key={index}>
-                {item.start}：{item.text}
-              </p>
-            ))}
-          </p>
-        </div>
+    <div className="text-black dark:text-white">
+      <Card className="bg-gradient-to-l hover:bg-gradient-to-r">
+        <div className="grid gap-6 ">
+          <div className="flex">
+            <button
+              className={`items-center rounded-full bg-gray-500 hover:bg-gray-600 active:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 ml-auto mr-3 ${additionalClasses}`}
+              onClick={openOptionsPage}
+            >
+              <p className="p-4">OPTION PAGE</p>
+            </button>
+          </div>
 
-        <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
-        <h1>NOW!字幕</h1>
+          <div>
+            <label className=" relative inline-flex items-center mr-5 cursor-pointer">
+              <input
+                type="checkbox"
+                value=""
+                className="sr-only peer"
+                checked={isChecked}
+                onChange={() => setIsChecked(!isChecked)}
+              />
+              <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+              <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                読み上げ機能
+              </span>
+            </label>
+          </div>
 
-        <Metric>
-          {currentTranscript.text ? currentTranscript.text : 'これはLIVE映像ですね！！'}
-        </Metric>
+          <div>
+            <label className="relative inline-flex items-center mr-5 cursor-pointer">
+              <input
+                type="checkbox"
+                value=""
+                className="sr-only peer"
+                checked={isChecked2}
+                onChange={() => setIsChecked2(!isChecked2)}
+              />
+              <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+              <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300 ">
+                ずんだもんビジュ
+              </span>
+            </label>
+          </div>
 
-        <p>----------------------------------------</p>
-        <h1>ALL字幕</h1>
-        <p>
-          {transcript
-            ? transcript.map((item, index) => <p key={index}>{item.text}</p>)
-            : '字幕情報が取得できません'}
-        </p>
-        <input type="file" onChange={handleFileChange} />
-        <div>
-          {audioData ? <AudioAnalyzer file={audioData[1]} /> : <p>No audio file selected</p>}
+          <div>
+            <label
+              htmlFor="countries"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            >
+              ずんだもん表示位置
+            </label>
+            <select
+              id="countries"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-32 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option selected>右下</option>
+              <option value="l-b">左下</option>
+              <option value="r-t">右上</option>
+              <option value="l-t">左上</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col items-start">
+            <div className="overflow-auto h-52 w-64">
+              <h1>NOW!字幕</h1>
+              <Metric>{currentTranscript.text ? currentTranscript.text : '読み込み中...'}</Metric>
+            </div>
+            <div className="flex-shrink-0 mt-4">
+              <p>----------------------------------------</p>
+            </div>
+          </div>
+
+          <div id="accordion-collapse" data-accordion="collapse">
+            <h2 id="accordion-collapse-heading-1">
+              <button
+                type="button"
+                className="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                data-accordion-target="#accordion-collapse-body-1"
+                aria-expanded="true"
+                aria-controls="accordion-collapse-body-1"
+              >
+                <span>What is Flowbite?</span>
+                <svg
+                  data-accordion-icon
+                  className="w-6 h-6 rotate-180 shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </h2>
+            <div
+              id="accordion-collapse-body-1"
+              className="hidden"
+              aria-labelledby="accordion-collapse-heading-1"
+            >
+              <div className="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+                <p className="mb-2 text-gray-500 dark:text-gray-400">
+                  Flowbite is an open-source library of interactive components built on top of
+                  Tailwind CSS including buttons, dropdowns, modals, navbars, and more.
+                </p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Check out this guide to learn how to{' '}
+                  <a
+                    href="/docs/getting-started/introduction/"
+                    className="text-blue-600 dark:text-blue-500 hover:underline"
+                  >
+                    get started
+                  </a>{' '}
+                  and start developing websites even faster with components on top of Tailwind CSS.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="log">
+            <p>VideoID：{video.videoId ? video.videoId : ''}</p>
+            <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
+            <p>現在時刻：{currentTime.toFixed(3)}</p>
+            <p>現在時刻+20：{(currentTime + 20).toFixed(3)}</p>
+            <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
+          </div>
+
+          <div className="flex flex-col items-start">
+            <div className="overflow-auto h-52 w-64">
+              <p>字幕取得時間範囲</p>
+              <div className="text-base">
+                <p>
+                  {getrangeTS.map((item, index) => (
+                    <p key={index}>
+                      {item.start}：{item.text}
+                    </p>
+                  ))}
+                </p>
+              </div>
+            </div>
+            <div className="flex-shrink-0 mt-4">
+              <p>----------------------------------------</p>
+            </div>
+          </div>
+
+          <div>
+            <h1>ALL字幕</h1>
+            <p>
+              {transcript
+                ? transcript.map((item, index) => <p key={index}>{item.text}</p>)
+                : '動画を取得できませんでした。'}
+            </p>
+          </div>
+          <div>
+            <input type="file" onChange={handleFileChange} />
+            <div>
+              {audioData ? <AudioAnalyzer file={audioData[1]} /> : <p>No audio file selected</p>}
+            </div>
+          </div>
         </div>
       </Card>
     </div>

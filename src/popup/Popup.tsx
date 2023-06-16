@@ -6,8 +6,8 @@ import AudioAnalyzer from './AudioAnalyzer';
 import AudioAnalyzerTest from './AudioAnalyzerTest';
 
 const Popup = (): ReactElement => {
-  document.body.style.width = '15rem';
-  document.body.style.height = '15rem';
+  document.body.style.width = '18rem';
+  document.body.style.height = '10rem';
 
   const openOptionsPage = () => {
     chrome.runtime.openOptionsPage(); //Chrome拡張のオプションページに遷移
