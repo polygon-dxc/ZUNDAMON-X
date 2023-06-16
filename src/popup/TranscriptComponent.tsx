@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import getTranscript from '../background/getTranscript';
+// import getTranscript from '../background/getTranscript';
 import useGetVideoId from '../background/useGetVideoId'; // useGetVideoIdのインポートを忘れずに
 import { getTranscriptResponseType, videoidtype } from '../types';
 

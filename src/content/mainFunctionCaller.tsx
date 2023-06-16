@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Card, Metric } from '@tremor/react';
 import { useRecoilValue } from 'recoil';
 
 import { audioDataState } from '../atom';
-import getTranscript from '../background/getTranscript';
 import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
 import useAudioData from '../background/useAudioData';
 import useGetVideoId from '../background/useGetVideoId';
@@ -42,28 +41,45 @@ const MainFunctionCaller = () => {
     //contentにアクセスする度に最初に実行
     if (video.videoId !== '') {
       //字幕データを取得
-      getTranscript(video).then((result) => {
-        setTranscript(result);
-      });
+      console.log('メッセージを送信します！');
+      chrome.runtime
+        .sendMessage({ name: 'getTranscript', videoId: `${video.videoId}` })
+        .then((res) => {
+          console.log('メッセージを送信しました！', res);
+        })
+        .catch((err) => {
+          console.log('Error:', err);
+        });
+      // getTranscript(video).then((result) => {
+      //   setTranscript(result);
+      // });
+      chrome.runtime.onMessage.addListener((request) => {
+        if (request.name === 'returnTranscript') {
+          console.log('メッセージを受け取りました！', request);
 
+          setTranscript(request.data.transcript);
+        }
+      });
       const unsubscribe = setInterval(() => {
         //contentアクセス後、毎秒実行
         //現在の再生時刻を取得
-        getVideoCurrentTime().then((result) => {
-          if (typeof result === 'number') {
-            setCurrentTime(result);
-          } else {
-            console.log('再生時刻取得error');
-          }
-          //現在の再生状態を取得
-          getPlaybackStatus().then((result) => {
-            if (typeof result === 'boolean') {
-              setPlaybackStatus(result);
-            } else {
-              console.log('再生状態取得error');
-            }
-          });
-        });
+        const currentTimeResult = getVideoCurrentTime();
+        // .then((result) => {
+        if (typeof currentTimeResult === 'number') {
+          setCurrentTime(currentTimeResult);
+        } else {
+          console.log('再生時刻取得error');
+        }
+        //現在の再生状態を取得
+        const playBackResult = getPlaybackStatus();
+        // .then((result) => {
+        if (typeof playBackResult === 'boolean') {
+          setPlaybackStatus(playBackResult);
+        } else {
+          console.log('再生状態取得error');
+        }
+        // });
+        // });
       }, getAudioTime);
       return () => {
         //タイマーを消す
@@ -196,11 +212,11 @@ const MainFunctionCaller = () => {
         </div>
 
         <h1>ALL字幕</h1>
-        <p>
-          {transcript
+        {/* <p>
+          {Array.isArray(transcript)
             ? transcript.map((item, index) => <p key={index}>{item.text}</p>)
             : '字幕情報が取得できません'}
-        </p>
+        </p> */}
         <input type="file" onChange={handleFileChange} />
         <div>
           {currentAudioFile ? (

@@ -1,6 +1,8 @@
 import browser from 'webextension-polyfill';
 
 import { isDev } from '../shared/utils';
+import { getTranscript } from './getTranscript';
+import { getWindowInfo } from './getWindowInfo';
 
 // show welcome page on new install
 browser.runtime.onInstalled.addListener(async (details) => {
@@ -10,5 +12,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
     await browser.tabs.create({ url });
   }
 });
+
+getTranscript();
 
 export {};
