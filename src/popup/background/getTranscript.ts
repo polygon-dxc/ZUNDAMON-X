@@ -1,7 +1,6 @@
 // getTranscript.ts
 import axios from 'axios';
-
-import { videoidtype } from '../types';
+import { videoidtype } from '../../types';
 
 async function getTranscript({ videoId }: videoidtype) {
   //字幕APIアクセスURL

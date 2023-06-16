@@ -1,12 +1,11 @@
 import React, { ReactElement } from 'react';
 
-import MainFunctionCaller from '../content/mainFunctionCaller';
-
 import AudioAnalyzer from './AudioAnalyzer';
 import AudioAnalyzerTest from './AudioAnalyzerTest';
+import MainFunctionCaller from './mainFunctionCaller';
 
 const Popup = (): ReactElement => {
-  document.body.style.width = '15rem';
+  document.body.style.width = '18rem';
   document.body.style.height = '15rem';
 
   const openOptionsPage = () => {
@@ -15,8 +14,6 @@ const Popup = (): ReactElement => {
 
   return (
     <div className="h-screen items-center justify-center">
-      <h1>Popup</h1>
-      <button onClick={openOptionsPage}>オプションページを開く</button>
       <MainFunctionCaller />
     </div>
   );
