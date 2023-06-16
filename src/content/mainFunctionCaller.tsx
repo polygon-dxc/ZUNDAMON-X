@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { getTranscriptResponseType, videoidtype } from '../types';
-import getTranscript from '../background/getTranscript';
-import useGetVideoId from '../background/useGetVideoId';
-import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
-import AudioAnalyzer from '../popup/AudioAnalyzer';
-import { audioDataState } from '../atom';
-import { useRecoilValue } from 'recoil';
-import useAudioData from '../background/useAudioData';
 import { Card, Metric } from '@tremor/react';
+import { useRecoilValue } from 'recoil';
+
+import { audioDataState } from '../atom';
+import getTranscript from '../background/getTranscript';
+import { getPlaybackStatus, getVideoCurrentTime } from '../background/getVideoCurrentTime';
+import useAudioData from '../background/useAudioData';
+import useGetVideoId from '../background/useGetVideoId';
+import AudioAnalyzer from '../popup/AudioAnalyzer';
+import { getTranscriptResponseType, videoidtype } from '../types';
 
 //Youtube再生画面を開いたら実行されます
 
@@ -21,8 +22,12 @@ const MainFunctionCaller = () => {
     duration: 0,
   });
   const [currentAudioFile, setCurrentAudioFile] = useState<File | null>(null);
-  const [getrangeTS, setGetrangeTS] = useState<getTranscriptResponseType[]>([]);
+
+  const [TSdisplay, setTSdisplay] = useState<getTranscriptResponseType[]>([]);
+  // const { audioData, getAudio } = useAudioData();
+
   const [createdAudioIndex, setCreatedAudioIndex] = useState<number[]>([]);
+  const [wishList, setWishList] = useState<number[]>([]);
 
   const getAudioTime = 1000; //音声データの取得間隔
   const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
@@ -80,44 +85,18 @@ const MainFunctionCaller = () => {
       }
 
       //--音声の事前生成処理------------------------------------------------------
-      //音声生成範囲の閾値
 
-      const upperLimitTime = currentTime + 30;
+      //ほしい物リストの範囲
+      const upperLimitTime = currentTime + 20;
       const lowerLimitTime = currentTime - 15;
-      const timeRangeIndices = transcript
+      //ほしい物リストの検索
+      const tmpWishlist = transcript
         .map((item, index) =>
           item.start >= lowerLimitTime && item.start <= upperLimitTime ? index : -1
         )
         .filter((index) => index !== -1);
-      const rangeData: getTranscriptResponseType[] = timeRangeIndices.map((item) => {
-        //重複生成を防ぐ分岐１
-        // if (transcript[item].start in audioData) {
-        //   // console.log("getAudioData処理完了済");
-        //   console.log(audioData)
-        // } else {
-        //重複生成を防ぐ分岐２
-        if (!createdAudioIndex.includes(transcript[item].start)) {
-          //音声データ1回目の生成
-          setCreatedAudioIndex((prevCreatedAudioIndex) => [
-            ...prevCreatedAudioIndex,
-            transcript[item].start,
-          ]); //生成済みstartを記録
-          console.log(transcript[item].text); //console.log('音声データ生成');
 
-          //getAudioData(transcript[item].text, transcript[item].start);
-        } else {
-          //console.log('スルー');
-        }
-        //}
-        return {
-          text: transcript[item].text,
-          start: transcript[item].start,
-          duration: transcript[item].duration,
-        };
-      });
-      setGetrangeTS(rangeData); //range内のTranscriptをセット
-    } else {
-      console.log('字幕情報が取得できません');
+      setWishList(tmpWishlist); //ほしい物リストの更新
     }
 
     // 現在時間から-5分の音声データを削除する
@@ -132,7 +111,50 @@ const MainFunctionCaller = () => {
     */
   }, [currentTime]);
 
+  //音声データの新規生成と削除------------------------------------------
+  useEffect(() => {
+    console.log('ほしい物リスト', wishList);
+
+    let tmpCreatedList = [...createdAudioIndex];
+    const tmpTSdisplay: getTranscriptResponseType[] = [];
+
+    wishList.forEach((item) => {
+      const findText = transcript[item];
+
+      if (findText) {
+        if (!createdAudioIndex.find((_) => _ == findText.start)) {
+          console.log('作る', findText.text);
+          // let _createdAudioIndex = [...createdAudioIndex];
+          // _createdAudioIndex.push(findText.start);
+          setCreatedAudioIndex((createdAudioIndex) => {
+            const _createdAudioIndex = [...createdAudioIndex];
+
+            _createdAudioIndex.push(findText.start);
+            return _createdAudioIndex;
+          });
+        } else {
+          tmpCreatedList = tmpCreatedList.filter((_) => _ !== findText.start);
+        }
+        tmpTSdisplay.push(findText);
+      }
+      return;
+    });
+    console.log('消す', tmpCreatedList);
+    //消す(tmpCreatedList])
+    setCreatedAudioIndex((_) => {
+      let _createdAudioIndex = [..._];
+      _createdAudioIndex = _createdAudioIndex.filter((_) => !tmpCreatedList.includes(_));
+      return _createdAudioIndex;
+    }); //作成済みの音声データの更新
+    setTSdisplay(tmpTSdisplay); //読み込み予定の字幕を更新
+  }, [wishList[0]]);
+
+  //音声の再生------------------------------------------
+  const currentAudio = useAudioData();
+  //今の時間に対応したstartがセットされた時に実行
+
   /* 今の保持しているstartに対応した音声データをstateから取得 */
+
   useEffect(() => {
     const currentAudioData = audioData[`${currentTranscript.start}`]; //startに対応したwavファイルを取得
     setCurrentAudioFile(currentAudioData); //wavファイルをセット
@@ -153,25 +175,26 @@ const MainFunctionCaller = () => {
         <p>現在時刻-20：{(currentTime - 20).toFixed(3)}</p>
         <p>現在時刻：{currentTime.toFixed(3)}</p>
         <p>現在時刻+20：{(currentTime + 20).toFixed(3)}</p>
-        <p>字幕取得時間範囲</p>
-        <div className="text-base ">
-          <p>
-            {getrangeTS.map((item, index) => (
-              <p key={index}>
-                {item.start}：{item.text}
-              </p>
-            ))}
-          </p>
-        </div>
-
         <p>再生状況：{playbackStatus ? '停止中' : '再生中'}</p>
+        <p>----------------------------------------</p>
         <h1>NOW!字幕</h1>
-
         <Metric>
           {currentTranscript.text ? currentTranscript.text : 'これはLIVE映像ですね！！'}
         </Metric>
 
-        <p>----------------------------------------</p>
+        <p>字幕取得時間範囲</p>
+        <div className="text-base ">
+          <p>
+            {TSdisplay
+              ? TSdisplay.map((item) => (
+                  <p key={item.start}>
+                    {item.start}：{item.text}
+                  </p>
+                ))
+              : ''}
+          </p>
+        </div>
+
         <h1>ALL字幕</h1>
         <p>
           {transcript
