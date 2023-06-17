@@ -8,7 +8,7 @@ const AudioAnalyzer = () => {
   // const [isMouseOpen, setIsMouseOpen] = useState(false);
   // const [file, setFile] = useState<File | null>(null);
   const audioData = useRecoilValue(audioDataState);
-
+  console.log('audioData', audioData);
   // useEffect(() => {
   //   if (audioData) {
   //     const blob = new Blob([audioData.frequencyData], { type: 'application/octet-stream' });

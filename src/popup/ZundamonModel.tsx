@@ -7,23 +7,36 @@ type Props = {
 };
 const ZundamonModel: FC<Props> = ({ isMouseOpen, comment }) => {
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'absolute', top: 0, left: 0 }}>
-      <div
-        style={{
-          padding: '12px',
-          border: '2px solid black',
-          borderRadius: '12px',
-          position: 'absolute',
-          bottom: '320px',
-          right: '200px',
-        }}
-      >
-        {comment}
-      </div>
+    <div
+      style={{
+        width: '1000px',
+        height: '100px',
+        position: 'absolute',
+        top: -120,
+        right: 0,
+      }}
+    >
+      {comment !== '' && (
+        <div
+          style={{
+            padding: '12px',
+            border: '2px solid black',
+            borderRadius: '12px',
+            position: 'absolute',
+            bottom: '50px',
+            right: '200px',
+            backgroundColor: 'white',
+            zIndex: 100,
+            fontWeight: 'bold',
+          }}
+        >
+          {comment}
+        </div>
+      )}
       <div
         style={{
           width: '230px',
-          zIndex: 9999,
+          zIndex: 90,
           position: 'absolute',
           bottom: 0,
           right: 0,
