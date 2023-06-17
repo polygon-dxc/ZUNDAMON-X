@@ -7,7 +7,7 @@ import { useRecoilState } from 'recoil';
 import { audioDataState } from '../atom';
 
 // 何秒前から音声データを取得するか
-const PRELOAD_SEC = 60;
+const PRELOAD_SEC = 30;
 
 const MainFunctionCaller = () => {
   const [wishList, setWishList] = useState<number[]>([]);
@@ -24,7 +24,7 @@ const MainFunctionCaller = () => {
         currentTime && item.start <= currentTime && item.start + item.duration >= currentTime
     );
 
-    if (val != -1) setCurrentTranscript(transcript[val + 1]);
+    if (val != -1) setCurrentTranscript(transcript[val]);
   }, [currentTime]);
 
   console.log(currentTranscript);
@@ -50,9 +50,8 @@ const MainFunctionCaller = () => {
 
   // 指定された音声を事前に生成
   useEffect(() => {
-    wishList
-      .filter((index) => !createdAudioIndexArray.includes(index))
-      .forEach((index) => {
+    const generate = async () => {
+      for (let index of wishList.filter((index) => !createdAudioIndexArray.includes(index))) {
         const targetTranscript = transcript[index];
         if (!targetTranscript) return;
         if (audios[targetTranscript.text]) return;
@@ -73,7 +72,13 @@ const MainFunctionCaller = () => {
         };
         setAudios((audios) => ({ ...audios, [targetTranscript.text]: audio }));
         setCreatedAudioIndexArray((createdAudioIndexArray) => [...createdAudioIndexArray, index]);
-      });
+
+        // サーバーにリクエストを送る順番を保証するために少し待ちを入れる
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+    };
+
+    generate();
   }, [wishList]);
 
   useEffect(() => {
@@ -87,6 +92,7 @@ const MainFunctionCaller = () => {
     const rate = duration / currentTranscript.duration;
     console.log({ voice: duration, video: currentTranscript.duration });
     console.log('rate: ', rate);
+    console.log('state : ', audio.readyState);
     audio.playbackRate = rate >= 1 ? rate : 1;
     audio.play();
 
