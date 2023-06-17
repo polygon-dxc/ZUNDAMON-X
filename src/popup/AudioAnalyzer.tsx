@@ -6,8 +6,10 @@ import image2 from './../../public/images/zundamon_content0001.png';
 type Props = {
   src: string;
 };
+const voiceThreshold = 100;
 const AudioAnalyzer: FC<Props> = ({ src }) => {
   const [number, setNumber] = useState(image1);
+  const [tmp, setTmp] = useState<Uint8Array>();
   useEffect(() => {
     if (!src) return;
 
@@ -20,39 +22,40 @@ const AudioAnalyzer: FC<Props> = ({ src }) => {
     // Audio要素を取得
 
     // AudioContextを作成
-    const audioContext = new (window.AudioContext || window.AudioContext)();
+    // const audioContext = new (window.AudioContext || window.AudioContext)();
 
     // AnalyserNodeを作成
-    const analyser = audioContext.createAnalyser();
+    // const analyser = audioContext.createAnalyser();
 
     // Audio要素とAnalyserNodeを接続
     const audio = new Audio();
-    const source = audioContext.createMediaElementSource(audio);
-    source.connect(analyser);
-    analyser.connect(audioContext.destination);
+    // const source = audioContext.createMediaElementSource(audio);
+    // source.connect(analyser);
+    // analyser.connect(audioContext.destination);
 
-    // 音声解析を開始
-    function analyzeAudio() {
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      analyser.getByteFrequencyData(dataArray);
+    // // 音声解析を開始
+    // function analyzeAudio() {
+    //   const bufferLength = analyser.frequencyBinCount;
+    //   const dataArray = new Uint8Array(bufferLength);
+    //   analyser.getByteFrequencyData(dataArray);
 
-      // 解析結果を使用して何らかの処理を行う
-      // ここでは簡単に周波数スペクトルをコンソールに出力しています
-      // console.log(dataArray);
-    }
+    //   setTmp(dataArray);
+    // }
 
     audio.src = src;
-    audio.onload = () => {
-      console.log('playing');
-      audio;
-    };
-    audio.play();
+    if (audio.onended)
+      audio.addEventListener('ended', () => {
+        setNumber(image1);
+      });
+    if (audio.onplay)
+      audio.addEventListener('play', () => {
+        setNumber(image2);
+      });
     // 音声が再生されるたびに解析を行う
-    const unsubscribe = setInterval(analyzeAudio, 100); // 一定間隔で解析するために定期的に呼び出す
-    return () => {
-      clearInterval(unsubscribe);
-    };
+    // const unsubscribe = setInterval(analyzeAudio, 100); // 一定間隔で解析するために定期的に呼び出す
+    // return () => {
+    //   clearInterval(unsubscribe);
+    // };
     // const audioContext = new (window.AudioContext || window.AudioContext)();
     // const reader = new FileReader();
 
