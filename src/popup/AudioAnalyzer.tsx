@@ -60,7 +60,7 @@ const AudioAnalyzer = () => {
   //   };
   //   reader.readAsArrayBuffer(file);
   // };
-  return <ZundamonModel isMouseOpen={true} comment={audioData ? audioData.subtitle : ''} />;
+  return <ZundamonModel isMouseOpen={false} comment={audioData ? audioData.subtitle : ''} />;
 };
 
 export default AudioAnalyzer;
