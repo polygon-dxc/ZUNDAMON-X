@@ -21,29 +21,7 @@ const AudioAnalyzer: FC<Props> = () => {
 
   const playElement = () => {
     if (!src) return;
-
-    // Audio要素を取得
-
-    // AudioContextを作成
-    // const audioContext = new (window.AudioContext || window.AudioContext)();
-
-    // AnalyserNodeを作成
-    // const analyser = audioContext.createAnalyser();
-
-    // Audio要素とAnalyserNodeを接続
     const audio = new Audio();
-    // const source = audioContext.createMediaElementSource(audio);
-    // source.connect(analyser);
-    // analyser.connect(audioContext.destination);
-
-    // // 音声解析を開始
-    // function analyzeAudio() {
-    //   const bufferLength = analyser.frequencyBinCount;
-    //   const dataArray = new Uint8Array(bufferLength);
-    //   analyser.getByteFrequencyData(dataArray);
-
-    //   setTmp(dataArray);
-    // }
 
     audio.src = src;
     if (audio.onended)
@@ -54,54 +32,6 @@ const AudioAnalyzer: FC<Props> = () => {
       audio.addEventListener('play', () => {
         setNumber(image2);
       });
-    // 音声が再生されるたびに解析を行う
-    // const unsubscribe = setInterval(analyzeAudio, 100); // 一定間隔で解析するために定期的に呼び出す
-    // return () => {
-    //   clearInterval(unsubscribe);
-    // };
-    // const audioContext = new (window.AudioContext || window.AudioContext)();
-    // const reader = new FileReader();
-
-    // reader.onload = (e) => {
-    //   if (e.target) {
-    //     const arrayBuffer = e.target.result as ArrayBuffer;
-
-    //     audioContext.decodeAudioData(arrayBuffer, (buffer) => {
-    //       const source = audioContext.createBufferSource();
-    //       source.buffer = buffer;
-
-    //       const analyser = audioContext.createAnalyser();
-    //       analyser.fftSize = 2048;
-
-    //       source.connect(analyser);
-    //       analyser.connect(audioContext.destination);
-    //       source.onended = () => {
-    //         setNumber(image1);
-    //         source.stop();
-    //         source.disconnect();
-    //         clearInterval(interval);
-    //         audioContext.close();
-    //       };
-    //       const bufferLength = analyser.frequencyBinCount;
-    //       const dataArray = new Uint8Array(bufferLength);
-
-    //       source.start();
-    //       const interval = setInterval(() => {
-    //         analyser.getByteTimeDomainData(dataArray);
-    //         let sum = 0;
-    //         for (let i = 0; i < bufferLength; i++) {
-    //           const value = (dataArray[i] - 128) / 128;
-    //           sum += value * value;
-    //         }
-    //         const rms = Math.sqrt(sum / bufferLength);
-    //         if (rms >= 0.001) {
-    //           setNumber(image2);
-    //         } else {
-    //           setNumber(image1);
-    //         }
-    //       }, 500);
-    //     });
-    //   }
   };
   function getAverageVolume(array: Uint8Array) {
     var values = 0;
@@ -116,8 +46,7 @@ const AudioAnalyzer: FC<Props> = () => {
     var average = values / length;
     return average;
   }
-  // reader.readAsArrayBuffer(file);
-  if (!frequencyData) return <></>;
+
   return (
     <div>
       {/* <button onClick={playFile}>play</button> */}
@@ -166,17 +95,33 @@ const AudioAnalyzer: FC<Props> = () => {
                   overflow: 'hidden',
                 }}
               >
-                <img
-                  src={chrome.runtime.getURL(getAverageVolume(frequencyData) > 0 ? image2 : image1)}
-                  style={{
-                    borderBottomLeftRadius: '100px',
-                    borderBottomRightRadius: '100px',
-                    height: '300px',
-                    position: 'absolute',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                />
+                {frequencyData ? (
+                  <img
+                    src={chrome.runtime.getURL(
+                      getAverageVolume(frequencyData) > 0 ? image2 : image1
+                    )}
+                    style={{
+                      borderBottomLeftRadius: '100px',
+                      borderBottomRightRadius: '100px',
+                      height: '300px',
+                      position: 'absolute',
+                      top: 0,
+                      zIndex: 1,
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={chrome.runtime.getURL(image1)}
+                    style={{
+                      borderBottomLeftRadius: '100px',
+                      borderBottomRightRadius: '100px',
+                      height: '300px',
+                      position: 'absolute',
+                      top: 0,
+                      zIndex: 1,
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>

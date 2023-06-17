@@ -7,7 +7,7 @@ import { useRecoilState } from 'recoil';
 import { audioDataState } from '../atom';
 
 // 何秒前から音声データを取得するか
-const PRELOAD_SEC = 40;
+const PRELOAD_SEC = 10;
 
 const MainFunctionCaller = () => {
   const [wishList, setWishList] = useState<number[]>([]);
@@ -96,9 +96,11 @@ const MainFunctionCaller = () => {
     audio.playbackRate = rate >= 1 ? rate : 1;
     audio.play();
 
+    const copyAudio = new Audio();
+    copyAudio.src = audio.src;
     var ctx = new AudioContext();
     var analyser = ctx.createAnalyser();
-    var audioSrc = ctx.createMediaElementSource(audio);
+    var audioSrc = ctx.createMediaElementSource(copyAudio);
     audioSrc.connect(analyser);
     analyser.connect(ctx.destination);
     var frequencyData = new Uint8Array(analyser.frequencyBinCount);
