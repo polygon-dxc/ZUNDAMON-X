@@ -28,6 +28,8 @@ const ZundamonModel: FC<Props> = ({ isMouseOpen, comment }) => {
             backgroundColor: 'white',
             zIndex: 100,
             fontWeight: 'bold',
+            maxWidth: '700px',
+            fontSize: '32px',
           }}
         >
           {comment}
