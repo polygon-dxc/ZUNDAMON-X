@@ -107,13 +107,7 @@ const MainFunctionCaller = () => {
     setAudioData({ src: audio.src, frequencyData });
   }, [currentTranscript?.start]);
 
-  return (
-    <div style={{ backgroundColor: 'white' }}>
-      <p>current time : {currentTime}</p>
-      <p>current transcript : {currentTranscript?.text}</p>
-      <p>current transcript start: {currentTranscript?.start}</p>
-    </div>
-  );
+  return <></>;
 };
 
 export default MainFunctionCaller;

@@ -5,14 +5,14 @@ import image2 from './../../public/images/zundamon_content0001.png';
 import { useRecoilValue } from 'recoil';
 import { audioDataState } from '../atom';
 
-type Props = {
-  src: string;
-};
+type Props = {};
 const voiceThreshold = 100;
-const AudioAnalyzer: FC<Props> = ({ src }) => {
+const AudioAnalyzer: FC<Props> = () => {
   const [number, setNumber] = useState(image1);
   const [tmp, setTmp] = useState<Uint8Array>();
-  const frecuencyData = useRecoilValue(audioDataState);
+  const audioData = useRecoilValue(audioDataState);
+  const { src, frequencyData } = audioData || {};
+
   useEffect(() => {
     if (!src) return;
 
@@ -117,7 +117,7 @@ const AudioAnalyzer: FC<Props> = ({ src }) => {
     return average;
   }
   // reader.readAsArrayBuffer(file);
-  if (!frecuencyData) return <></>;
+  if (!frequencyData) return <></>;
   return (
     <div>
       {/* <button onClick={playFile}>play</button> */}
@@ -167,9 +167,7 @@ const AudioAnalyzer: FC<Props> = ({ src }) => {
                 }}
               >
                 <img
-                  src={chrome.runtime.getURL(
-                    getAverageVolume(frecuencyData.frequencyData) > 0 ? image2 : image1
-                  )}
+                  src={chrome.runtime.getURL(getAverageVolume(frequencyData) > 0 ? image2 : image1)}
                   style={{
                     borderBottomLeftRadius: '100px',
                     borderBottomRightRadius: '100px',
