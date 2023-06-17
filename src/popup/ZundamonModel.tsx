@@ -3,11 +3,32 @@ import image1 from './../../public/images/zundamon_0001.png';
 import image2 from './../../public/images/zundamon_0002.png';
 type Props = {
   isMouseOpen: boolean;
+  comment: string;
 };
-const ZundamonModel: FC<Props> = ({ isMouseOpen }) => {
+const ZundamonModel: FC<Props> = ({ isMouseOpen, comment }) => {
   return (
-    <div>
-      <div style={{ width: '200px', height: '400px', zIndex: 9999 }}>
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <div
+        style={{
+          padding: '12px',
+          border: '2px solid black',
+          borderRadius: '12px',
+          position: 'absolute',
+          bottom: '320px',
+          right: '200px',
+        }}
+      >
+        {comment}
+      </div>
+      <div
+        style={{
+          width: '230px',
+          zIndex: 9999,
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+        }}
+      >
         <div
           style={{
             position: 'relative',

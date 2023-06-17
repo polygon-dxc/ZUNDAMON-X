@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 
 import AudioAnalyzer from './AudioAnalyzer';
-import AudioAnalyzerTest from './AudioAnalyzerTest';
 import MainFunctionCaller from './mainFunctionCaller';
 
 const Popup = (): ReactElement => {
