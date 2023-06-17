@@ -65,6 +65,12 @@ const MainFunctionCaller = () => {
         audio.onload = () => {
           console.log('audio loaded', targetTranscript.text);
         };
+        audio.onerror = () => {
+          console.log('audio error', targetTranscript.text);
+          setCreatedAudioIndexArray((createdAudioIndexArray) =>
+            createdAudioIndexArray.filter((item) => item !== index)
+          );
+        };
         setAudios((audios) => ({ ...audios, [targetTranscript.text]: audio }));
         setCreatedAudioIndexArray((createdAudioIndexArray) => [...createdAudioIndexArray, index]);
       });
@@ -77,7 +83,13 @@ const MainFunctionCaller = () => {
     console.log(audio);
     if (!audio) return;
 
+    const { duration } = audio;
+    const rate = duration / currentTranscript.duration;
+    console.log({ voice: duration, video: currentTranscript.duration });
+    console.log('rate: ', rate);
+    audio.playbackRate = rate >= 1 ? rate : 1;
     audio.play();
+
     setAudioData(audio);
   }, [currentTranscript?.start]);
 
