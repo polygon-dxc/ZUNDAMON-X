@@ -105,7 +105,7 @@ const MainFunctionCaller = () => {
     analyser.connect(ctx.destination);
     var frequencyData = new Uint8Array(analyser.frequencyBinCount);
 
-    console.log(frequencyData);
+    console.log('frequencyData', frequencyData);
     setAudioData({ src: audio.src, frequencyData, subtitle: currentTranscript.text });
   }, [currentTranscript?.start]);
 
