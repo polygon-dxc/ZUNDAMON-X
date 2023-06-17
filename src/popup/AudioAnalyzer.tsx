@@ -2,6 +2,8 @@ import React, { FC, useEffect, useState } from 'react';
 
 import image1 from './../../public/images/zundamon_content0000.png';
 import image2 from './../../public/images/zundamon_content0001.png';
+import { useRecoilValue } from 'recoil';
+import { audioDataState } from '../atom';
 
 type Props = {
   src: string;
@@ -10,6 +12,7 @@ const voiceThreshold = 100;
 const AudioAnalyzer: FC<Props> = ({ src }) => {
   const [number, setNumber] = useState(image1);
   const [tmp, setTmp] = useState<Uint8Array>();
+  const frecuencyData = useRecoilValue(audioDataState);
   useEffect(() => {
     if (!src) return;
 
@@ -100,9 +103,21 @@ const AudioAnalyzer: FC<Props> = ({ src }) => {
     //     });
     //   }
   };
+  function getAverageVolume(array: Uint8Array) {
+    var values = 0;
+    var length = array.length;
 
+    // バッファ内のすべての値を合計する
+    for (var i = 0; i < length; i++) {
+      values += array[i];
+    }
+
+    // 平均値を計算する
+    var average = values / length;
+    return average;
+  }
   // reader.readAsArrayBuffer(file);
-
+  if (!frecuencyData) return <></>;
   return (
     <div>
       {/* <button onClick={playFile}>play</button> */}
@@ -152,7 +167,9 @@ const AudioAnalyzer: FC<Props> = ({ src }) => {
                 }}
               >
                 <img
-                  src={chrome.runtime.getURL(number)}
+                  src={chrome.runtime.getURL(
+                    getAverageVolume(frecuencyData.frequencyData) > 0 ? image2 : image1
+                  )}
                   style={{
                     borderBottomLeftRadius: '100px',
                     borderBottomRightRadius: '100px',
