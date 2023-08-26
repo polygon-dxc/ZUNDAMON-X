@@ -74,13 +74,7 @@ const AudioAnalyzer = () => {
       <button
         onClick={() => {
           let currentEmotionIndex = emotionList.findIndex((emotion) => emotion === emotionType);
-          console.log('currentEmotionIndex', currentEmotionIndex);
-          //　次の感情に変更
           currentEmotionIndex = (currentEmotionIndex + 1) % emotionList.length;
-          // currentEmotionIndex == (currentEmotionIndex + 1) % emotionList.length;
-          console.log('nextEmotionIndex', currentEmotionIndex, '/', emotionList.length);
-
-          console.log('currentEmotion', emotionList[currentEmotionIndex]);
           setEmotionType(emotionList[currentEmotionIndex]);
         }}
       >

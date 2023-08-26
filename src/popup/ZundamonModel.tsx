@@ -1,6 +1,4 @@
 import { FC } from 'react';
-import image1 from '../../public/images/zundamon_content0000.png';
-import image2 from '../../public/images/zundamon_content0001.png';
 import { emotionType } from '../types';
 type Props = {
   emotionType: emotionType;
@@ -91,7 +89,6 @@ const ZundamonModel: FC<Props> = ({ isMouseOpen, comment, emotionType }) => {
                 }}
               >
                 {/* データがない時にもずんだもんは表示したままにする。 */}
-
                 <img
                   src={chrome.runtime.getURL(
                     `images/zunndamonImg/${emotionType}/${emotionType}_${
