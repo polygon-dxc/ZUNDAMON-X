@@ -3,8 +3,9 @@ import { useGetVideoStatus } from './useGetVideoStatus';
 import useGetVideoId from '../background/useGetVideoId';
 import { useGetTranscript } from './useGetTranscript';
 import { getTranscriptResponseType, isGetTranscriptResponseTypeArray } from '../types';
-import { useRecoilState } from 'recoil';
-import { audioDataState } from '../atom';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { audioDataState, emotionTypeAtom } from '../atom';
+import { getEmotionType } from './features/getEmotionType';
 
 // 何秒前から音声データを取得するか
 const PRELOAD_SEC = 10;
@@ -16,6 +17,7 @@ const MainFunctionCaller = () => {
   const transcript = useGetTranscript(videoId.videoId);
   const [createdAudioIndexArray, setCreatedAudioIndexArray] = useState<number[]>([]);
   const [audioData, setAudioData] = useRecoilState(audioDataState);
+  const setEmotionType = useSetRecoilState(emotionTypeAtom);
 
   const [currentTranscript, setCurrentTranscript] = useState<getTranscriptResponseType>();
   useEffect(() => {
@@ -68,6 +70,7 @@ const MainFunctionCaller = () => {
         console.log('create audio', targetTranscript.text);
         const audio = new Audio();
         audio.src = 'http://127.0.0.1:8000/voice?message=' + targetTranscript.text;
+
         audio.onload = () => {
           console.log('audio loaded', targetTranscript.text);
         };
@@ -79,6 +82,9 @@ const MainFunctionCaller = () => {
         };
         setAudios((audios) => ({ ...audios, [targetTranscript.text]: audio }));
         setCreatedAudioIndexArray((createdAudioIndexArray) => [...createdAudioIndexArray, index]);
+        getEmotionType(targetTranscript.text).then((emotionType) => {
+          setEmotionType(emotionType);
+        });
 
         // サーバーにリクエストを送る順番を保証するために少し待ちを入れる
         await new Promise((resolve) => setTimeout(resolve, 50));
