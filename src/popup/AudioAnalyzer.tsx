@@ -73,9 +73,10 @@ const AudioAnalyzer = () => {
     <>
       <button
         onClick={() => {
-          let currentEmotionIndex = emotionList.findIndex((emotion) => emotion === emotionType);
-          currentEmotionIndex = (currentEmotionIndex + 1) % emotionList.length;
-          setEmotionType(emotionList[currentEmotionIndex]);
+          // console.log('aiueo');
+          // let currentEmotionIndex = emotionList.findIndex((emotion) => emotion === emotionType);
+          // currentEmotionIndex = (currentEmotionIndex + 1) % emotionList.length;
+          // setEmotionType(emotionList[currentEmotionIndex]);
         }}
       >
         change emotion

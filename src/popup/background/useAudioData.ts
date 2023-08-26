@@ -5,10 +5,7 @@ const useAudioData = () => {
   const [audioData, setAudioData] = useState<audioDataObject>({});
 
   const getAudio = (subtitle: string, start: number) => {
-    fetch(
-      'https://asia-northeast1-zundamon-x.cloudfunctions.net/zundamon-api-proxy/voice?message=' +
-        subtitle
-    )
+    fetch('http://127.0.0.1:8000/voice?message=' + subtitle)
       .then((res: Response) => {
         return res.arrayBuffer();
       })

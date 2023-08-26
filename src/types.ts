@@ -13,6 +13,10 @@ export type getTranscriptResponseType = {
   duration: number;
 };
 
+// getTranscriptResponseType[]型かどうかを判定する関数
+export const isGetTranscriptResponseTypeArray = (arg: any): arg is getTranscriptResponseType[] => {
+  return Array.isArray(arg);
+};
 export type audioDataObject = {
   [startTime: number]: File;
 };

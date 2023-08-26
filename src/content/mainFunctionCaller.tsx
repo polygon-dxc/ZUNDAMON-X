@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGetVideoStatus } from './useGetVideoStatus';
 import useGetVideoId from '../background/useGetVideoId';
 import { useGetTranscript } from './useGetTranscript';
-import { getTranscriptResponseType } from '../types';
+import { getTranscriptResponseType, isGetTranscriptResponseTypeArray } from '../types';
 import { useRecoilState } from 'recoil';
 import { audioDataState } from '../atom';
 
@@ -19,12 +19,14 @@ const MainFunctionCaller = () => {
 
   const [currentTranscript, setCurrentTranscript] = useState<getTranscriptResponseType>();
   useEffect(() => {
-    const val = transcript.findIndex(
-      (item) =>
-        currentTime && item.start <= currentTime && item.start + item.duration >= currentTime
-    );
+    if (typeof transcript === 'object' && transcript.length > 0 && currentTime) {
+      const val = transcript.findIndex(
+        (item) =>
+          currentTime && item.start <= currentTime && item.start + item.duration >= currentTime
+      );
 
-    if (val != -1) setCurrentTranscript(transcript[val]);
+      if (val != -1) setCurrentTranscript(transcript[val]);
+    }
   }, [currentTime]);
 
   console.log(currentTranscript);
@@ -33,7 +35,14 @@ const MainFunctionCaller = () => {
 
   //currentTimeが変更する度に実行
   useEffect(() => {
-    if (!transcript || !currentTime || !videoId.videoId) return;
+    console.log(transcript, 'type is', typeof transcript);
+    if (
+      !isGetTranscriptResponseTypeArray(transcript) ||
+      !transcript ||
+      !currentTime ||
+      !videoId.videoId
+    )
+      return;
 
     //ほしい物リストの範囲
     const upperLimitTime = currentTime + PRELOAD_SEC;
@@ -58,9 +67,7 @@ const MainFunctionCaller = () => {
 
         console.log('create audio', targetTranscript.text);
         const audio = new Audio();
-        audio.src =
-          'https://asia-northeast1-zundamon-x.cloudfunctions.net/zundamon-api-proxy/voice?message=' +
-          targetTranscript.text;
+        audio.src = 'http://127.0.0.1:8000/voice?message=' + targetTranscript.text;
         audio.onload = () => {
           console.log('audio loaded', targetTranscript.text);
         };
