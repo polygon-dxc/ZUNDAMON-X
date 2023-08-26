@@ -1,14 +1,10 @@
 export const getTranscript = () =>
   chrome.runtime.onMessage.addListener(async (request) => {
     if (request.name === 'getTranscript') {
-      await fetch(
-        `https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy?videoId=` +
-          request.videoId,
-        {
-          method: 'GET',
-          headers: { 'Access-Control-Allow-Origin': '*' },
-        }
-      )
+      await fetch(`http://127.0.0.1:8000/transcript/?id=` + request.videoId, {
+        method: 'GET',
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      })
         .then((json) => {
           return json.json();
         })
