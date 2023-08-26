@@ -16,3 +16,10 @@ export type getTranscriptResponseType = {
 export type audioDataObject = {
   [startTime: number]: File;
 };
+
+export type emotionType =
+  | '通常'
+  | '少しネガティブ'
+  | 'とてもネガティブ'
+  | '少しポジティブ'
+  | 'とてもポジティブ';

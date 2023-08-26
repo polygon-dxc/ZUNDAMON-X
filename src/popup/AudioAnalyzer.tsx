@@ -3,12 +3,21 @@ import React, { FC, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { audioDataState } from '../atom';
 import ZundamonModel from './ZundamonModel';
+import { emotionType } from '../types';
 
 const AudioAnalyzer = () => {
   // const [isMouseOpen, setIsMouseOpen] = useState(false);
   // const [file, setFile] = useState<File | null>(null);
   const audioData = useRecoilValue(audioDataState);
   console.log('audioData', audioData);
+  const emotionList: emotionType[] = [
+    '通常',
+    '少しネガティブ',
+    'とてもネガティブ',
+    '少しポジティブ',
+    'とてもポジティブ',
+  ];
+  const [emotionType, setEmotionType] = useState<emotionType>('通常');
   // useEffect(() => {
   //   if (audioData) {
   //     const blob = new Blob([audioData.frequencyData], { type: 'application/octet-stream' });
@@ -60,7 +69,30 @@ const AudioAnalyzer = () => {
   //   };
   //   reader.readAsArrayBuffer(file);
   // };
-  return <ZundamonModel isMouseOpen={false} comment={audioData ? audioData.subtitle : ''} />;
+  return (
+    <>
+      <button
+        onClick={() => {
+          let currentEmotionIndex = emotionList.findIndex((emotion) => emotion === emotionType);
+          console.log('currentEmotionIndex', currentEmotionIndex);
+          //　次の感情に変更
+          currentEmotionIndex = (currentEmotionIndex + 1) % emotionList.length;
+          // currentEmotionIndex == (currentEmotionIndex + 1) % emotionList.length;
+          console.log('nextEmotionIndex', currentEmotionIndex, '/', emotionList.length);
+
+          console.log('currentEmotion', emotionList[currentEmotionIndex]);
+          setEmotionType(emotionList[currentEmotionIndex]);
+        }}
+      >
+        change emotion
+      </button>
+      <ZundamonModel
+        emotionType={emotionType}
+        isMouseOpen={false}
+        comment={audioData ? audioData.subtitle : ''}
+      />
+    </>
+  );
 };
 
 export default AudioAnalyzer;
