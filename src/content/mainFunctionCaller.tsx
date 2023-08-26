@@ -58,9 +58,7 @@ const MainFunctionCaller = () => {
 
         console.log('create audio', targetTranscript.text);
         const audio = new Audio();
-        audio.src =
-          'https://asia-northeast1-zundamon-x.cloudfunctions.net/zundamon-api-proxy/voice?message=' +
-          targetTranscript.text;
+        audio.src = 'http://127.0.0.1:8000/voice?message=' + targetTranscript.text;
         audio.onload = () => {
           console.log('audio loaded', targetTranscript.text);
         };
