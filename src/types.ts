@@ -6,7 +6,7 @@ export type currentTimeType = {
   currentTime: number;
 };
 
-//JSONでは、小数点を含む数値はすべてNumber型
+// JSONでは、小数点を含む数値はすべてNumber型
 export type getTranscriptResponseType = {
   text: string;
   start: number;
@@ -15,4 +15,10 @@ export type getTranscriptResponseType = {
 
 export type audioDataObject = {
   [startTime: number]: File;
+};
+
+export type VoiceStyles = {
+  [character: string]: {
+    [style: string]: number;
+  };
 };
