@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { set } from 'lodash';
-import { getTranscriptResponseType, videoidtype } from '../types';
 import { Card, Metric } from '@tremor/react';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
 
@@ -8,6 +7,7 @@ import useGetVideoId from './background/useGetVideoId';
 import { getPlaybackStatus, getVideoCurrentTime } from './background/getVideoCurrentTime';
 import getTranscript from './background/getTranscript';
 import useAudioData from './background/useAudioData';
+import { getTranscriptResponseType, isGetTranscriptResponseTypeArray } from './types';
 //used in tailwind css
 let additionalClasses = 'focus:ring-2 focus:ring-purple-600';
 let customBorderLineClasses = 'border-b border-black dark:border-white';
@@ -78,7 +78,7 @@ const MainFunctionCaller = () => {
   //currentTimeが変更する度に実行
   useEffect(() => {
     //currentTimeとtranscriptが取得できた場合のみ実行
-    if (currentTime && transcript) {
+    if (currentTime && isGetTranscriptResponseTypeArray(transcript)) {
       //現在の再生時刻と連動した字幕の表示処理---------------------------------------
       const nowtranscript = transcript.find((item) => Math.abs(currentTime - item.start) <= 0.5);
       if (nowtranscript) {

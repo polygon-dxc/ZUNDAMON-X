@@ -1,14 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { audioDataState } from '../atom';
+import { audioDataState, emotionTypeAtom } from '../atom';
 import ZundamonModel from './ZundamonModel';
+import { emotionType } from '../types';
 
 const AudioAnalyzer = () => {
   // const [isMouseOpen, setIsMouseOpen] = useState(false);
   // const [file, setFile] = useState<File | null>(null);
   const audioData = useRecoilValue(audioDataState);
-  console.log('audioData', audioData);
+  const emotionType = useRecoilValue(emotionTypeAtom);
   // useEffect(() => {
   //   if (audioData) {
   //     const blob = new Blob([audioData.frequencyData], { type: 'application/octet-stream' });
@@ -60,7 +61,25 @@ const AudioAnalyzer = () => {
   //   };
   //   reader.readAsArrayBuffer(file);
   // };
-  return <ZundamonModel isMouseOpen={false} comment={audioData ? audioData.subtitle : ''} />;
+  return (
+    <>
+      <button
+        onClick={() => {
+          // console.log('aiueo');
+          // let currentEmotionIndex = emotionList.findIndex((emotion) => emotion === emotionType);
+          // currentEmotionIndex = (currentEmotionIndex + 1) % emotionList.length;
+          // setEmotionType(emotionList[currentEmotionIndex]);
+        }}
+      >
+        change emotion
+      </button>
+      <ZundamonModel
+        emotionType={emotionType}
+        isMouseOpen={false}
+        comment={audioData ? audioData.subtitle : ''}
+      />
+    </>
+  );
 };
 
 export default AudioAnalyzer;

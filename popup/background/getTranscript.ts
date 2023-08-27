@@ -30,13 +30,10 @@ async function getTranscript({ videoId }: videoidtype) {
   */
 
   try {
-    const response = await axios.get(
-      `https://asia-northeast1-zundamon-x.cloudfunctions.net/transcript-proxy?videoId=` + videoId,
-      {
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        withCredentials: true,
-      }
-    );
+    const response = await axios.get(`http://127.0.0.1:8000/transcript?videoId=` + videoId, {
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      withCredentials: true,
+    });
 
     // The data property of the response will contain the transcript
     const transcript = response.data;
