@@ -13,6 +13,10 @@ export type getTranscriptResponseType = {
   duration: number;
 };
 
+// getTranscriptResponseType[]型かどうかを判定する関数
+export const isGetTranscriptResponseTypeArray = (arg: any): arg is getTranscriptResponseType[] => {
+  return Array.isArray(arg);
+};
 export type audioDataObject = {
   [startTime: number]: File;
 };
@@ -22,3 +26,9 @@ export type VoiceStyles = {
     [style: string]: number;
   };
 };
+export type emotionType =
+  | '通常'
+  | '少しネガティブ'
+  | 'とてもネガティブ'
+  | '少しポジティブ'
+  | 'とてもポジティブ';

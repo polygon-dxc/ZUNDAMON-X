@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { emotionType } from './types';
 
 // 音声データの型
 export const audioDataState = atom<{
@@ -21,5 +22,8 @@ export const selectedCharacterState = atom<Character>({
 
 export const selectedStyleState = atom<Style>({
   key: 'selectedStyleState',
-  default: '',
+  default: '',});
+export const emotionTypeAtom = atom<emotionType>({
+  key: 'emotionTypeAtom',
+  default: '通常',
 });

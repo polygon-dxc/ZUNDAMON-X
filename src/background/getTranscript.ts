@@ -1,7 +1,7 @@
 export const getTranscript = () =>
   chrome.runtime.onMessage.addListener(async (request) => {
     if (request.name === 'getTranscript') {
-      await fetch(`http://127.0.0.1:8000/transcript/?videoId=` + request.videoId, {
+      await fetch(`http://127.0.0.1:8000/transcript?videoId=` + request.videoId, {
         method: 'GET',
         headers: { 'Access-Control-Allow-Origin': '*' },
       })
