@@ -11,6 +11,18 @@ export const audioDataState = atom<{
   default: null, // { [start]: File }
 });
 
+// 音声スタイルの型 from voice_style_data.json
+type Character = string;
+type Style = string;
+
+export const selectedCharacterState = atom<Character>({
+  key: 'selectedCharacterState',
+  default: '',
+});
+
+export const selectedStyleState = atom<Style>({
+  key: 'selectedStyleState',
+  default: '',});
 export const emotionTypeAtom = atom<emotionType>({
   key: 'emotionTypeAtom',
   default: '通常',

@@ -70,7 +70,6 @@ const MainFunctionCaller = () => {
         console.log('create audio', targetTranscript.text);
         const audio = new Audio();
         audio.src = 'http://127.0.0.1:8000/voice?message=' + targetTranscript.text;
-
         audio.onload = () => {
           console.log('audio loaded', targetTranscript.text);
         };
