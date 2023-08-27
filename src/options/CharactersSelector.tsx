@@ -17,9 +17,6 @@ const CharacterSelector = () => {
   >(selectedCharacterState);
   const [selectedStyle, setSelectedStyle] = useRecoilState(selectedStyleState);
 
-  //キャラ選択時に自動スクロール
-  const styleHeadingRef = useRef<HTMLParagraphElement | null>(null);
-
   //キャラクター選択時の処理
   const setClickedCharacter = (character: string) => {
     setSelectedCharacter(character);
@@ -37,9 +34,8 @@ const CharacterSelector = () => {
     }
 
     // スクロール処理
-    if (styleHeadingRef.current) {
-      styleHeadingRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    document.documentElement.style.scrollBehavior = 'smooth';
+    window.scrollTo(0, 40);
   };
 
   return (
@@ -81,9 +77,7 @@ const CharacterSelector = () => {
         ))}
       </div>
 
-      <p className="text-lg animate-tracking-in-expand mb-3" ref={styleHeadingRef}>
-        スタイルを選択
-      </p>
+      <p className="text-lg animate-tracking-in-expand mb-3">スタイルを選択</p>
       {selectedCharacter ? (
         <div>
           {Object.keys(voiceStyleData[selectedCharacter as keyof typeof voiceStyleData]).map(
