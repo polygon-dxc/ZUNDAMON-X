@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { emotionType } from '../types';
-import voice_style_data from '../data/voice_style_data.json';
+import character_image_path from '../character_image_path.json';
 type Props = {
   emotionType: emotionType;
   isMouseOpen: boolean;
@@ -8,13 +8,23 @@ type Props = {
   selectedCharactor: string;
 };
 
-const ZundamonModel: FC<Props> = ({ isMouseOpen, comment, emotionType, selectedCharactor }) => {
+const ZundamonModel: FC<Props> = ({
+  isMouseOpen,
+  comment,
+  emotionType,
+  selectedCharactor: selectedCharacter,
+}) => {
   chrome.storage.sync.get(['selectedCharacter'], function (result) {
     console.log('Value currently is ' + result.selectedCharacter);
   });
-  const getImageUrl = voice_style_data.find(
-    (data: { id: string }) => data.id === selectedCharactor
-  )?.image_url;
+  // voice_stye_dataから画像のパスを取得
+  const getImageUrl = (
+    character_image_path as {
+      [keys: string]: {
+        [keys: string]: string;
+      };
+    }
+  ).characterImages[selectedCharacter];
   return (
     <div
       style={{
@@ -100,7 +110,7 @@ const ZundamonModel: FC<Props> = ({ isMouseOpen, comment, emotionType, selectedC
                 {/* データがない時にもずんだもんは表示したままにする。 */}
                 <img
                   src={chrome.runtime.getURL(
-                    selectedCharactor === 'ずんだもん' || !selectedCharactor
+                    selectedCharacter === 'ずんだもん' || !selectedCharacter
                       ? `images/zunndamonImg/${emotionType}/${emotionType}_${
                           isMouseOpen ? '開口' : '閉口'
                         }.png`
