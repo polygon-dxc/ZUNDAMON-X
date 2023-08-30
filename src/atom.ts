@@ -17,7 +17,7 @@ type Style = string;
 
 export const selectedCharacterState = atom<Character>({
   key: 'selectedCharacterState',
-  default: '',
+  default: 'ずんだもん',
 });
 
 export const selectedStyleState = atom<Style>({

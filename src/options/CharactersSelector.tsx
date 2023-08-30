@@ -16,6 +16,7 @@ const CharacterSelector = () => {
         for (const [character, styles] of Object.entries(voiceStyleData)) {
           for (const [style, id] of Object.entries(styles)) {
             if (id === result.selectedId) {
+              console.log('Character is set to ' + character);
               setSelectedCharacter(character);
               setSelectedStyle(style);
               return;
@@ -42,6 +43,9 @@ const CharacterSelector = () => {
   const setCharacterID = () => {
     chrome.storage.sync.set({ selectedId: selectedId }, function () {
       console.log('Character ID is set to ' + selectedId);
+      chrome.storage.sync.set({ selectedCharacter: selectedCharacter }, function () {
+        console.log('Character is set to ' + selectedCharacter);
+      });
     });
   };
 
@@ -66,11 +70,6 @@ const CharacterSelector = () => {
     // IDを取得してstateを更新
     const id = voiceStyles[character as keyof typeof voiceStyleData][defaultStyle];
     setSelectedId(id);
-
-    //storageにキャラクター名を保存
-    chrome.storage.sync.set({ selectedCharacter: character }, function () {
-      console.log('Character is set to ' + character);
-    });
 
     // スクロール処理
     document.documentElement.style.scrollBehavior = 'smooth';

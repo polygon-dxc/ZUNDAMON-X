@@ -1,6 +1,7 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { emotionType } from '../types';
 import character_image_path from '../character_image_path.json';
+import { is } from 'date-fns/locale';
 type Props = {
   emotionType: emotionType;
   isMouseOpen: boolean;
@@ -14,17 +15,25 @@ const ZundamonModel: FC<Props> = ({
   emotionType,
   selectedCharactor: selectedCharacter,
 }) => {
-  chrome.storage.sync.get(['selectedCharacter'], function (result) {
-    console.log('Value currently is ' + result.selectedCharacter);
-  });
+  const [isAnimation, setIsAnimation] = useState<boolean>(false);
+  useEffect(() => {
+    console.log('animate');
+    setIsAnimation(true);
+    setTimeout(() => {
+      setIsAnimation(false);
+    }, 200);
+  }, [comment, emotionType]);
   // voice_stye_dataから画像のパスを取得
-  const getImageUrl = (
-    character_image_path as {
-      [keys: string]: {
-        [keys: string]: string;
-      };
-    }
-  ).characterImages[selectedCharacter];
+  const getImageUrl = () => {
+    const tmp = (
+      character_image_path as {
+        [keys: string]: {
+          [keys: string]: string;
+        };
+      }
+    ).characterImages[selectedCharacter];
+    return tmp;
+  };
   return (
     <div
       style={{
@@ -109,19 +118,22 @@ const ZundamonModel: FC<Props> = ({
               >
                 {/* データがない時にもずんだもんは表示したままにする。 */}
                 <img
-                  src={chrome.runtime.getURL(
+                  src={
                     selectedCharacter === 'ずんだもん' || !selectedCharacter
-                      ? `images/zunndamonImg/${emotionType}/${emotionType}_${
-                          isMouseOpen ? '開口' : '閉口'
-                        }.png`
-                      : getImageUrl
-                  )}
+                      ? chrome.runtime.getURL(
+                          `images/zunndamonImg/${emotionType}/${emotionType}_${
+                            isMouseOpen ? '開口' : '閉口'
+                          }.png`
+                        )
+                      : getImageUrl()
+                  }
                   style={{
                     borderBottomLeftRadius: '100px',
                     borderBottomRightRadius: '100px',
-                    height: '300px',
+                    width: '160px',
                     position: 'absolute',
-                    top: 0,
+                    transition: 'top 0.2s ease-in-out',
+                    top: isAnimation ? '-10px' : '0px',
                     zIndex: 1,
                   }}
                 />
