@@ -10,6 +10,13 @@ const AudioAnalyzer = () => {
   // const [file, setFile] = useState<File | null>(null);
   const audioData = useRecoilValue(audioDataState);
   const emotionType = useRecoilValue(emotionTypeAtom);
+  const [selectedCharactor, setSelectedCharactor] = useState('ずんだもん');
+  useEffect(() => {
+    chrome.storage.sync.get(['selectedCharacter'], function (result) {
+      console.log('Value currently is ' + result.selectedCharacter);
+      setSelectedCharactor(result.selectedCharacter);
+    });
+  }, []);
   // useEffect(() => {
   //   if (audioData) {
   //     const blob = new Blob([audioData.frequencyData], { type: 'application/octet-stream' });
@@ -77,6 +84,7 @@ const AudioAnalyzer = () => {
         emotionType={emotionType}
         isMouseOpen={false}
         comment={audioData ? audioData.subtitle : ''}
+        selectedCharactor={selectedCharactor}
       />
     </>
   );
