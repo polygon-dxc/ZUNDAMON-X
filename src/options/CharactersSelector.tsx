@@ -1,12 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { selectedCharacterState, selectedIdState, selectedStyleState } from './../atom';
 import voiceStyleData from './../voice_style_data.json';
 import { VoiceStyles } from '../types';
 import characterImages from './../character_image_path.json';
-import { useRef } from 'react';
 
 const CharacterSelector = () => {
+  // 初期化
+  useEffect(() => {
+    chrome.storage.sync.get(['selectedId'], function (result) {
+      if (result.selectedId !== undefined) {
+        setSelectedId(result.selectedId);
+
+        // IDを使ってselectedCharacterとselectedStyleを逆更新
+        for (const [character, styles] of Object.entries(voiceStyleData)) {
+          for (const [style, id] of Object.entries(styles)) {
+            if (id === result.selectedId) {
+              setSelectedCharacter(character);
+              setSelectedStyle(style);
+              return;
+            }
+          }
+        }
+      }
+    });
+  }, []);
+
   //キャラクターの画像を取得
   const characterImagesData: Record<string, string> = characterImages.characterImages;
 
