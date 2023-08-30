@@ -67,6 +67,11 @@ const CharacterSelector = () => {
     const id = voiceStyles[character as keyof typeof voiceStyleData][defaultStyle];
     setSelectedId(id);
 
+    //storageにキャラクター名を保存
+    chrome.storage.sync.set({ selectedCharacter: character }, function () {
+      console.log('Character is set to ' + character);
+    });
+
     // スクロール処理
     document.documentElement.style.scrollBehavior = 'smooth';
     window.scrollTo(0, 40);
