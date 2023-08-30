@@ -3,8 +3,8 @@ import { useGetVideoStatus } from './useGetVideoStatus';
 import useGetVideoId from '../background/useGetVideoId';
 import { useGetTranscript } from './useGetTranscript';
 import { getTranscriptResponseType, isGetTranscriptResponseTypeArray } from '../types';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { audioDataState, emotionTypeAtom } from '../atom';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { audioDataState, emotionTypeAtom, selectedIdState } from '../atom';
 import { getEmotionType } from './features/getEmotionType';
 
 // 何秒前から音声データを取得するか
@@ -18,6 +18,7 @@ const MainFunctionCaller = () => {
   const [createdAudioIndexArray, setCreatedAudioIndexArray] = useState<number[]>([]);
   const [audioData, setAudioData] = useRecoilState(audioDataState);
   const setEmotionType = useSetRecoilState(emotionTypeAtom);
+  const selectedId = useRecoilValue(selectedIdState);
 
   const [currentTranscript, setCurrentTranscript] = useState<getTranscriptResponseType>();
   useEffect(() => {
@@ -61,15 +62,23 @@ const MainFunctionCaller = () => {
 
   // 指定された音声を事前に生成
   useEffect(() => {
+    let isCancelled = false; // キャンセルフラグ
+
     const generate = async () => {
       for (let index of wishList.filter((index) => !createdAudioIndexArray.includes(index))) {
+        if (isCancelled) return; // キャンセルされた場合は処理を中断
         const targetTranscript = transcript[index];
         if (!targetTranscript) return;
         if (audios[targetTranscript.text]) return;
 
         console.log('create audio', targetTranscript.text);
         const audio = new Audio();
-        audio.src = 'http://127.0.0.1:8000/voice?message=' + targetTranscript.text;
+        audio.src =
+          'http://127.0.0.1:8000/voice?message=' +
+          targetTranscript.text +
+          '&character=' +
+          selectedId;
+        console.log(' Access URL ->  ', audio.src);
         audio.onload = () => {
           console.log('audio loaded', targetTranscript.text);
         };
@@ -91,7 +100,10 @@ const MainFunctionCaller = () => {
     };
 
     generate();
-  }, [wishList]);
+    return () => {
+      isCancelled = true; // コンポーネントのアンマウントまたは依存配列の変更時にキャンセルフラグを立てる
+    };
+  }, [wishList, selectedId]);
 
   useEffect(() => {
     if (!currentTranscript) return;

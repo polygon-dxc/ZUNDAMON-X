@@ -22,7 +22,15 @@ export const selectedCharacterState = atom<Character>({
 
 export const selectedStyleState = atom<Style>({
   key: 'selectedStyleState',
-  default: '',});
+  default: '',
+});
+
+export const selectedIdState = atom<number>({
+  key: 'selectedIdState',
+  default: 3,
+});
+
+//感情分析の型
 export const emotionTypeAtom = atom<emotionType>({
   key: 'emotionTypeAtom',
   default: '通常',

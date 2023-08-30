@@ -26,6 +26,7 @@ export type VoiceStyles = {
     [style: string]: number;
   };
 };
+
 export type emotionType =
   | '通常'
   | '少しネガティブ'

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { selectedCharacterState, selectedStyleState } from './../atom';
+import { selectedCharacterState, selectedIdState, selectedStyleState } from './../atom';
 import voiceStyleData from './../voice_style_data.json';
 import { VoiceStyles } from '../types';
 import characterImages from './../character_image_path.json';
@@ -11,11 +11,13 @@ const CharacterSelector = () => {
   const characterImagesData: Record<string, string> = characterImages.characterImages;
 
   // キャラクター&そのスタイルのstate管理
-  const voiceStyles: typeof voiceStyleData = voiceStyleData;
+  const voiceStyles: VoiceStyles = voiceStyleData;
+
   const [selectedCharacter, setSelectedCharacter] = useRecoilState<
     string | keyof typeof voiceStyleData
   >(selectedCharacterState);
   const [selectedStyle, setSelectedStyle] = useRecoilState(selectedStyleState);
+  const [selectedId, setSelectedId] = useRecoilState(selectedIdState);
 
   //キャラクター選択時の処理
   const setClickedCharacter = (character: string) => {
@@ -27,11 +29,17 @@ const CharacterSelector = () => {
     );
 
     // スタイルのキーのリストの最初の要素をデフォルトのスタイルとして選択
+    let defaultStyle = '';
     if (characterStylesKeys && characterStylesKeys.length > 0) {
-      setSelectedStyle(characterStylesKeys[0]);
+      defaultStyle = characterStylesKeys[0];
+      setSelectedStyle(defaultStyle);
     } else {
       setSelectedStyle(''); // キャラクターにスタイルがない場合はリセット
     }
+
+    // IDを取得してstateを更新
+    const id = voiceStyles[character as keyof typeof voiceStyleData][defaultStyle];
+    setSelectedId(id);
 
     // スクロール処理
     document.documentElement.style.scrollBehavior = 'smooth';
@@ -84,7 +92,11 @@ const CharacterSelector = () => {
             (style) => (
               <button
                 type="button"
-                onClick={() => setSelectedStyle(style)}
+                onClick={() => {
+                  setSelectedStyle(style);
+                  const id = voiceStyles[selectedCharacter as keyof typeof voiceStyleData][style];
+                  setSelectedId(id);
+                }}
                 className={`py-2.5 px-5 mr-2 mb-2 text-sm font-medium focus:outline-none rounded-full focus:ring-4 text-center 
                   ${
                     selectedStyle === style
