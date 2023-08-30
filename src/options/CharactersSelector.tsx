@@ -19,6 +19,13 @@ const CharacterSelector = () => {
   const [selectedStyle, setSelectedStyle] = useRecoilState(selectedStyleState);
   const [selectedId, setSelectedId] = useRecoilState(selectedIdState);
 
+  // IDをchrome storageに保存
+  const setCharacterID = () => {
+    chrome.storage.sync.set({ selectedId: selectedId }, function () {
+      console.log('Character ID is set to ' + selectedId);
+    });
+  };
+
   //キャラクター選択時の処理
   const setClickedCharacter = (character: string) => {
     setSelectedCharacter(character);
@@ -112,6 +119,12 @@ const CharacterSelector = () => {
       ) : (
         <p>キャラクターを選択してください</p>
       )}
+      <button
+        onClick={() => setCharacterID()}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-3"
+      >
+        決定
+      </button>
     </div>
   );
 };

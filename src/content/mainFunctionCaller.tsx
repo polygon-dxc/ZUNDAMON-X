@@ -18,7 +18,14 @@ const MainFunctionCaller = () => {
   const [createdAudioIndexArray, setCreatedAudioIndexArray] = useState<number[]>([]);
   const [audioData, setAudioData] = useRecoilState(audioDataState);
   const setEmotionType = useSetRecoilState(emotionTypeAtom);
-  const selectedId = useRecoilValue(selectedIdState);
+  // const selectedId = useRecoilValue(selectedIdState);
+  const [selectedCharacter, setSelectedCharacter] = useState<number>(3);
+  chrome.storage.sync.get(['selectedId'], function (result) {
+    console.log('Value currently is ' + result.selectedId);
+    if (result.selectedId != undefined) {
+      setSelectedCharacter(result.selectedId);
+    }
+  });
 
   const [currentTranscript, setCurrentTranscript] = useState<getTranscriptResponseType>();
   useEffect(() => {
@@ -71,13 +78,13 @@ const MainFunctionCaller = () => {
         if (!targetTranscript) return;
         if (audios[targetTranscript.text]) return;
 
-        console.log('create audio', targetTranscript.text);
+        console.log('create audio', targetTranscript.text, 'character', selectedCharacter);
         const audio = new Audio();
         audio.src =
           'http://127.0.0.1:8000/voice?message=' +
           targetTranscript.text +
           '&character=' +
-          selectedId;
+          selectedCharacter;
         console.log(' Access URL ->  ', audio.src);
         audio.onload = () => {
           console.log('audio loaded', targetTranscript.text);
@@ -103,7 +110,7 @@ const MainFunctionCaller = () => {
     return () => {
       isCancelled = true; // コンポーネントのアンマウントまたは依存配列の変更時にキャンセルフラグを立てる
     };
-  }, [wishList, selectedId]);
+  }, [wishList]);
 
   useEffect(() => {
     if (!currentTranscript) return;
