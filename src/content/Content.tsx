@@ -21,6 +21,7 @@ const Content = (): ReactElement => {
         right: 0,
         // backgroundColor: 'rgb(255 255 255 / 30%)',
         backgroundColor: 'black',
+        pointerEvents: 'none',
       }}
     >
       <MainFunctionCaller />
