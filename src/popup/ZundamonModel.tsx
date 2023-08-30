@@ -1,11 +1,20 @@
 import { FC } from 'react';
 import { emotionType } from '../types';
+import voice_style_data from '../data/voice_style_data.json';
 type Props = {
   emotionType: emotionType;
   isMouseOpen: boolean;
   comment: string;
+  selectedCharactor: string;
 };
-const ZundamonModel: FC<Props> = ({ isMouseOpen, comment, emotionType }) => {
+
+const ZundamonModel: FC<Props> = ({ isMouseOpen, comment, emotionType, selectedCharactor }) => {
+  chrome.storage.sync.get(['selectedCharacter'], function (result) {
+    console.log('Value currently is ' + result.selectedCharacter);
+  });
+  const getImageUrl = voice_style_data.find(
+    (data: { id: string }) => data.id === selectedCharactor
+  )?.image_url;
   return (
     <div
       style={{
@@ -91,9 +100,11 @@ const ZundamonModel: FC<Props> = ({ isMouseOpen, comment, emotionType }) => {
                 {/* データがない時にもずんだもんは表示したままにする。 */}
                 <img
                   src={chrome.runtime.getURL(
-                    `images/zunndamonImg/${emotionType}/${emotionType}_${
-                      isMouseOpen ? '開口' : '閉口'
-                    }.png`
+                    selectedCharactor === 'ずんだもん' || !selectedCharactor
+                      ? `images/zunndamonImg/${emotionType}/${emotionType}_${
+                          isMouseOpen ? '開口' : '閉口'
+                        }.png`
+                      : getImageUrl
                   )}
                   style={{
                     borderBottomLeftRadius: '100px',
