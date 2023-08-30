@@ -1,21 +1,49 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { selectedCharacterState, selectedStyleState } from './../atom';
+import { selectedCharacterState, selectedIdState, selectedStyleState } from './../atom';
 import voiceStyleData from './../voice_style_data.json';
 import { VoiceStyles } from '../types';
 import characterImages from './../character_image_path.json';
-import { useRef } from 'react';
 
 const CharacterSelector = () => {
+  // 初期化
+  useEffect(() => {
+    chrome.storage.sync.get(['selectedId'], function (result) {
+      if (result.selectedId !== undefined) {
+        setSelectedId(result.selectedId);
+
+        // IDを使ってselectedCharacterとselectedStyleを逆更新
+        for (const [character, styles] of Object.entries(voiceStyleData)) {
+          for (const [style, id] of Object.entries(styles)) {
+            if (id === result.selectedId) {
+              setSelectedCharacter(character);
+              setSelectedStyle(style);
+              return;
+            }
+          }
+        }
+      }
+    });
+  }, []);
+
   //キャラクターの画像を取得
   const characterImagesData: Record<string, string> = characterImages.characterImages;
 
   // キャラクター&そのスタイルのstate管理
-  const voiceStyles: typeof voiceStyleData = voiceStyleData;
+  const voiceStyles: VoiceStyles = voiceStyleData;
+
   const [selectedCharacter, setSelectedCharacter] = useRecoilState<
     string | keyof typeof voiceStyleData
   >(selectedCharacterState);
   const [selectedStyle, setSelectedStyle] = useRecoilState(selectedStyleState);
+  const [selectedId, setSelectedId] = useRecoilState(selectedIdState);
+
+  // IDをchrome storageに保存
+  const setCharacterID = () => {
+    chrome.storage.sync.set({ selectedId: selectedId }, function () {
+      console.log('Character ID is set to ' + selectedId);
+    });
+  };
 
   //キャラクター選択時の処理
   const setClickedCharacter = (character: string) => {
@@ -27,11 +55,17 @@ const CharacterSelector = () => {
     );
 
     // スタイルのキーのリストの最初の要素をデフォルトのスタイルとして選択
+    let defaultStyle = '';
     if (characterStylesKeys && characterStylesKeys.length > 0) {
-      setSelectedStyle(characterStylesKeys[0]);
+      defaultStyle = characterStylesKeys[0];
+      setSelectedStyle(defaultStyle);
     } else {
       setSelectedStyle(''); // キャラクターにスタイルがない場合はリセット
     }
+
+    // IDを取得してstateを更新
+    const id = voiceStyles[character as keyof typeof voiceStyleData][defaultStyle];
+    setSelectedId(id);
 
     // スクロール処理
     document.documentElement.style.scrollBehavior = 'smooth';
@@ -84,7 +118,11 @@ const CharacterSelector = () => {
             (style) => (
               <button
                 type="button"
-                onClick={() => setSelectedStyle(style)}
+                onClick={() => {
+                  setSelectedStyle(style);
+                  const id = voiceStyles[selectedCharacter as keyof typeof voiceStyleData][style];
+                  setSelectedId(id);
+                }}
                 className={`py-2.5 px-5 mr-2 mb-2 text-sm font-medium focus:outline-none rounded-full focus:ring-4 text-center 
                   ${
                     selectedStyle === style
@@ -100,6 +138,12 @@ const CharacterSelector = () => {
       ) : (
         <p>キャラクターを選択してください</p>
       )}
+      <button
+        onClick={() => setCharacterID()}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-3"
+      >
+        決定
+      </button>
     </div>
   );
 };
