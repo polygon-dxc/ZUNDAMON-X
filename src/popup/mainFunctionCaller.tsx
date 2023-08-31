@@ -34,6 +34,31 @@ const MainFunctionCaller = () => {
   const [isChecked, setIsChecked] = useState(true); //toggle1
   const [isChecked2, setIsChecked2] = useState(true); //toggle2
 
+  const [volume, setVolume] = useState(50);
+  // 初期化
+  useEffect(() => {
+    chrome.storage.sync.get('volume', (data) => {
+      setVolume((data.volume || 0.5) * 100);
+    });
+  }, []);
+
+  // ボリューム変更処理（デバウンス）
+  let timer: NodeJS.Timeout | null = null;
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    timer = setTimeout(() => {
+      chrome.storage.sync.set({ volume: newVolume / 100 }, () => {
+        console.log(`Volume set to ${newVolume / 100}`);
+      });
+    }, 5000);
+  };
+
   const getAudioTime = 1000; //音声データの取得間隔
 
   //VideoIDを取得
@@ -147,6 +172,7 @@ const MainFunctionCaller = () => {
   return (
     <div className="text-black dark:text-white bg-gradient-to-l md:bg-gradient-to-r">
       <div className="flex"></div>
+
       <Card className="bg-gradient-to-l md:bg-gradient-to-r">
         <div className="grid gap-4">
           <div className="flex">
@@ -159,6 +185,21 @@ const MainFunctionCaller = () => {
           </div>
 
           <div>
+            <div className="mb-10">
+              <label
+                htmlFor="large-range"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                音量
+              </label>
+              <input
+                id="large-range"
+                type="range"
+                value={volume}
+                onChange={handleVolumeChange}
+                className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
+              />
+            </div>
             <label className=" relative inline-flex items-center mr-5 cursor-pointer">
               <input
                 type="checkbox"

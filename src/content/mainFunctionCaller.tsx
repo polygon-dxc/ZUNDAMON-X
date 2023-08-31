@@ -43,6 +43,8 @@ const MainFunctionCaller = () => {
 
   const [audios, setAudios] = useState<{ [key in string]: HTMLAudioElement }>({});
 
+  let currentVolume = 0.5; // デフォルト値
+
   //currentTimeが変更する度に実行
   useEffect(() => {
     console.log(transcript, 'type is', typeof transcript);
