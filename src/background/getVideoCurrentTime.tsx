@@ -1,11 +1,12 @@
-/* アクティブなタブを取得し、そのタブに対してスクリプトを実行する */
+//* アクティブなタブを取得し、そのタブに対してスクリプトを実行する
 const scripting = async (onRun: () => number | boolean) => {
   const [tab] = await chrome.tabs.query({
     //アクティブなタブを取得
     active: true,
     currentWindow: true,
   });
-  /* 取得したタブに対してスクリプトを実行 */
+
+  //* 取得したタブに対してスクリプトを実行
   return chrome.scripting
     .executeScript({
       target: { tabId: tab.id || 0 },
@@ -17,7 +18,7 @@ const scripting = async (onRun: () => number | boolean) => {
     });
 };
 
-/* 現在の再生時刻を取得 */
+//* 現在の再生時刻を取得
 // 例: 1分30秒の場合、90を返す
 export const getVideoCurrentTime = () => {
   const videoCurrentTime = () => {
@@ -25,15 +26,13 @@ export const getVideoCurrentTime = () => {
     return video?.currentTime;
   };
   return videoCurrentTime();
-  // return scripting(videoCurrentTime);
 };
 
-/* 現在の再生状態を取得 */
+//* 現在の再生状態を取得
 export const getPlaybackStatus = () => {
   const playbackStatus = () => {
     const video = document.getElementsByTagName('video')[0];
     return video?.paused;
   };
   return playbackStatus();
-  // return scripting(playbackStatus);
 };

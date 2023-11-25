@@ -42,11 +42,10 @@ const MainFunctionCaller = () => {
   const [isChecked2, setIsChecked2] = useState(true); //toggle2
   const [isOpen, setIsOpen] = useState(false); //ログの表示
 
-  //VideoIDを取得
-  //videoIdのオブジェクト生成
+  //* VideoIDを取得｜オブジェクトの生成
   const video: videoidtype = useGetVideoId();
 
-  //videoIdが変更する度に実行
+  //* videoIdが変更する度に実行
   useEffect(() => {
     //contentにアクセスする度に最初に実行
     if (video.videoId !== '') {
@@ -98,7 +97,7 @@ const MainFunctionCaller = () => {
     }
   }, [video.videoId]);
 
-  //currentTimeが変更する度に実行
+  //* currentTimeが変更する度に実行
   useEffect(() => {
     //currentTimeとtranscriptが取得できた場合のみ実行
     if (currentTime && transcript) {
@@ -137,7 +136,7 @@ const MainFunctionCaller = () => {
     */
   }, [currentTime]);
 
-  //音声データの新規生成と削除------------------------------------------
+  //* 音声データの新規生成と削除
   useEffect(() => {
     console.log('ほしい物リスト', wishList);
 
@@ -175,12 +174,11 @@ const MainFunctionCaller = () => {
     setTSdisplay(tmpTSdisplay); //読み込み予定の字幕を更新
   }, [wishList[0]]);
 
-  //音声の再生------------------------------------------
+  //* 音声の再生
   const currentAudio = useAudioData();
   //今の時間に対応したstartがセットされた時に実行
 
   /* 今の保持しているstartに対応した音声データをstateから取得 */
-
   useEffect(() => {
     const currentAudioData = audioData[`${currentTranscript.start}`]; //startに対応したwavファイルを取得
     setCurrentAudioFile(currentAudioData); //wavファイルをセット

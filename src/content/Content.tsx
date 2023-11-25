@@ -10,7 +10,6 @@ import { useRecoilValue } from 'recoil';
 import MainFunctionCaller from './mainFunctionCaller';
 
 const Content = (): ReactElement => {
-  // const { audioData, getAudio } = useAudioData();
   const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
   const audioData = useRecoilValue(audioDataState);
 
@@ -25,7 +24,6 @@ const Content = (): ReactElement => {
         zIndex: 999,
         bottom: 0,
         right: 0,
-        // backgroundColor: 'rgb(255 255 255 / 30%)',
         backgroundColor: 'black',
       }}
     >
