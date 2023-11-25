@@ -1,3 +1,5 @@
+//todo 使ってないなら消す
+
 import React, { useEffect, useState } from 'react';
 
 // import getTranscript from '../background/getTranscript';

@@ -1,3 +1,6 @@
+/*
+ * Chrome拡張をインストールした時に表示されるページ
+ */
 import React, { ReactElement } from 'react';
 
 const Welcome = (): ReactElement => {
