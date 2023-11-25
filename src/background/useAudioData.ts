@@ -2,7 +2,7 @@ import { useSetRecoilState } from 'recoil';
 import { audioDataState } from '../atom';
 import { audioDataObject } from '../types';
 
-// 字幕から音声ファイルの生成 -> 音声データをstateに保存する処理
+//* 字幕から音声ファイルの生成 -> 音声データをstateに保存する処理
 const useAudioData = () => {
   const setAudioData = useSetRecoilState<audioDataObject>(audioDataState); // recoilのstateに保存する関数
   const getAudioData = (subtitle: string, start: number) => {
