@@ -3,7 +3,6 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import AudioAnalyzer from '../popup/AudioAnalyzer';
 
 import { Counter } from './features/counter';
-// import getAudioData from './getAudioData';
 import useAudioData from '../background/useAudioData';
 import { audioDataState } from '../atom';
 import { useRecoilValue } from 'recoil';
@@ -13,9 +12,10 @@ const Content = (): ReactElement => {
   const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
   const audioData = useRecoilValue(audioDataState);
 
-  /* 動作確認用 */
+  //* ボタンを押したときにaudioDataを取得する 動作確認用
+  //todo 不要になったら削除する
   const handleClick = () => {
-    getAudioData('こんにちは', 1); // useAudioDataフックを呼び出す
+    getAudioData('こんにちは', 1);
   };
   return (
     <div

@@ -101,7 +101,6 @@ const MainFunctionCaller = () => {
       if (nowtranscript) {
         setCurrentTranscript(nowtranscript); //現在の字幕をセット
       } else {
-        //console.log('近くに字幕がない！');
       }
 
       //--音声の事前生成処理------------------------------------------------------
@@ -176,8 +175,6 @@ const MainFunctionCaller = () => {
   useEffect(() => {
     const currentAudioData = audioData[`${currentTranscript.start}`]; //startに対応したwavファイルを取得
     setCurrentAudioFile(currentAudioData); //wavファイルをセット
-
-    //console.log('startTimeが変更されました:', currentTranscript.start);
   }, [currentTranscript.start]);
 
   // テスト用

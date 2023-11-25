@@ -20,7 +20,7 @@ const useAudioData = () => {
         // recoilのstateに保存
         setAudioData((prevData) => ({
           ...prevData,
-          [`${start}`]: wavFile, // data[startの時間] = wavファイル
+          [`${start}`]: wavFile,
         }));
       });
   };
