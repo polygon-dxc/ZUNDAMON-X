@@ -1,3 +1,6 @@
+//* ボタンを押したときにaudioDataを取得する 動作確認用
+//todo テスト用のコンポーネントなので削除する
+
 import React, { ReactElement, useEffect, useState } from 'react';
 
 import AudioAnalyzer from '../popup/AudioAnalyzer';
@@ -12,8 +15,6 @@ const Content = (): ReactElement => {
   const { getAudioData } = useAudioData(); // useAudioDataフックを呼び出す
   const audioData = useRecoilValue(audioDataState);
 
-  //* ボタンを押したときにaudioDataを取得する 動作確認用
-  //todo 不要になったら削除する
   const handleClick = () => {
     getAudioData('こんにちは', 1);
   };
