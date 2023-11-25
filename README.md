@@ -3,7 +3,7 @@
  <img src="https://raw.githubusercontent.com/sinanbekar/browser-extension-react-typescript-starter/main/public/images/extension_128.png" alt="Browser Extension React & TypeScript Starter" width="128">
   <br>
   <h2>
-  ずんだもんXなのだ！
+  ※こちらは開発中のコンテンツです※
   </h2>
 </div>
 
